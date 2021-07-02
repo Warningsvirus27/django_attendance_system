@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pdf_maker</title>
+    <style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+
+{% for x in table %}
+
+<h2>Weekly Entries in {{ x.0.0 }}</h2>
+<table>
+  <tr>
+    {% for head in heading %}
+    <th>{{ head }}</th>
+    {% endfor %}
+  </tr>
+    {% for line in x %}
+  <tr>
+      {% for block in line %}
+    <th>{{ block }}</th>
+{% endfor %}
+  </tr>
+{% endfor %}
+</table>
+{% endfor %}
+</body>
+</html>

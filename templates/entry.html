@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>entry tab</title>
+</head>
+<body>
+{% if user.is_authenticated %}
+<form method="get">
+    <h2 class = "TAG_ID">TAG ID</h2>
+     <input class = "TAG_ID" type = "text" name = "TAG_ID" required><br>
+    <h2 class = "AREA">AREA </h2>
+    <select class="option" name = "AREA" required>
+     <option disabled="disabled" selected="selected">--Choose Your Course</option>
+     <option> Computer Lab 1-a </option>
+        <option> Computer Lab 1-b </option>
+     <option> Computer Lab 2-a </option>
+        <option> Computer Lab 2-b </option>
+     <option> Computer Lab 3-a </option>
+        <option> Computer Lab 3-b </option>
+     <option> Computer Lab 4-a </option>
+        <option> Computer Lab 4-b </option>
+     <option> Electronics lab </option>
+     <option> Sports Room </option>
+     <option> Library </option>
+     </select>
+     <button class="submit" type = "submit">SUBMIT</button>
+  </form>
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+{% for message in messages %}
+{{ message }}
+</div>
+{% endfor %}
+{% endif %}
+
+<br><br><br><br>
+<a href="{% url 'page:homepage' %}">
+     <button class="hp" type = "submit" id = "button" onclick="setColor('button', '#36454f')" ><i class = "fa fa-home &nbsp">   HOMEPAGE</i></button>
+         </a>
+
+{% else %}
+<div>
+<h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
+</div>
+    {% endif %}
+</body>
+</html>

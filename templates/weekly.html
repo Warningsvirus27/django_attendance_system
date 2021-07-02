@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block style %}
+* {
+box-sizing: border-box;
+}
+.container {
+overflow: hidden;
+max-width : 95%;
+}
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+width : 900px;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+.column_simple {
+float: left;
+width: 50%;
+height : auto;
+padding: 10px;
+text-align: left;
+margin: auto;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+h4 {
+font-size: 1.1em;
+color: white;
+}
+.line{
+border-top: 1px dashed white;
+}
+.line_solid{
+border-top: 5px solid red;
+}
+.row_color
+{
+background-color: rgba(47, 142, 245);
+}
+.normal_row{
+background-color : rgba(146, 156, 143);
+}
+td {
+border-right: solid 2px rgba(52, 58, 64);
+border-left: solid 2px rgba(52, 58, 64);
+}
+#shadow_table{
+box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
+}
+.name_message{
+color: black;
+}
+{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated %}
+<div class="myDiv">
+    <form method="get">
+        <div class="container">
+            <br>
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Any specific date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE">
+                        <option disabled="disabled" selected="selected">--Today's date is default</option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <hr class="line">
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </form>
+
+</div>
+<br>
+<hr class="line">
+
+<div class="container">
+    {% if messages %}
+    <div class="alert-alert-danger" role="alert">
+        <b>{% for message in messages %}</b>
+        <b>{{ message }}</b>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+
+<div class="container">
+    <div class="column_simple">
+        <div class="alert alert-danger" role="alert">
+            {% if courses %}
+            <h4 class="name_message"><b>RECORDS FROM : {{today}} - {{last_date}}</b></h4>
+            {% endif %}
+        </div>
+    </div>
+    <div class="column_simple">
+        <a href="{% url 'page:weekly-monthly_excel_pdf' %}1/?date={{today}}&end_date={{last_date}}">
+            <button type="submit" class="btn btn-danger">Get Excel</button>
+        </a>
+        <a href="{% url 'page:weekly-monthly_excel_pdf' %}2/?date={{today}}&end_date={{last_date}}">
+            <button type="submit" class="btn btn-danger">Get Pdf</button>
+        </a>
+    </div>
+</div>
+<br>
+
+
+<div class="container">
+    {% if courses %}
+    {% for course,data in courses.items %}
+    <hr class="line_solid">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="name_message"><b>COURSE : {{course}}</b></h4>
+    </div>
+    <br>
+
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">{{course}}</th>
+        </tr>
+        </thead>
+
+        {% for batches,records in data.items %}
+        <tbody>
+        <tr class="row_color">
+            <th scope="row"><b>{{batches}}</b></th>
+            {% for head in table_head %}
+            <th scope="row"><b>{{head}}</b></th>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+
+        {% for std in records %}
+        {% if not std %}
+        <tr class="normal_row">
+            <td scope="row"><b>No Recrods</b></td>
+        </tr>
+        {% else %}
+        <tr class="normal_row">
+            {% for data in std %}
+            <td scope="row"><b></b></td>
+            {% for m in data %}
+            <td scope="row"><b>{{m}}</b></td>
+            {% endfor %}
+
+        </tr>
+        {% endfor %}
+        {% endif %}
+        {% endfor %}
+        </tbody>
+        {% endfor %}
+    </table>
+    <br>
+    {% endfor %}
+    {% endif %}
+</div>
+
+
+{% else %}
+<div>
+    <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
+</div>
+{% endif %}
+<br><br><br>
+
+{% endblock %}

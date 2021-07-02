@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pdf_maker</title>
+    <style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+
+<font size="+2"><b>Place : {{Place}}</b></font><br>
+<font size="+2"><b>Date : {{Date}}</b></font><br>
+<font size="+2"><b>Distinct count : {{Distinct_count}}</b></font><br>
+<font size="+2"><b>Total count : {{Total_count}}</b></font><br>
+<font size="+2"><b>Time : {{Time}}</b></font><br>
+<br>
+
+{% if data %}
+<table>
+  <tr>
+    {% for head in heading %}
+    <th bgcolor="grey">{{ head }}</th>
+    {% endfor %}
+  </tr>
+    {% for line in data %}
+  <tr>
+        {% for block in line %}
+    <th>{{ block }}</th>
+        {% endfor %}
+  </tr>
+    {% endfor %}
+</table>
+<br><br><br><br>
+{% endif %}
+
+
+
+{% if teacher_list %}
+<table>
+  <tr>
+    {% for head in t_heading %}
+    <th bgcolor="grey">{{ head }}</th>
+    {% endfor %}
+  </tr>
+    {% for line in teacher_list %}
+  <tr>
+        {% for block in line %}
+    <th>{{ block }}</th>
+        {% endfor %}
+  </tr>
+    {% endfor %}
+</table>
+{% endif %}
+</body>
+</html>

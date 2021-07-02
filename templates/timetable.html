@@ -1,0 +1,401 @@
+{% extends 'base.html' %}
+
+
+{% block style %}
+.container {
+overflow: hidden;
+max-width : 95%;
+}
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+width : 900px;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+.column_simple {
+float: left;
+width: 50%;
+height : auto;
+padding: 10px;
+text-align: left;
+margin: auto;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+.name{
+color: white;
+}
+.line{
+border-top: 1px dashed white;
+}
+.line_solid{
+border-top: 5px solid red;
+}
+.row_color
+{
+background-color: rgba(47, 142, 245);
+}
+.normal_row{
+background-color : rgba(146, 156, 143);
+}
+td {
+  border-right: solid 2px rgba(52, 58, 64);
+  border-left: solid 2px rgba(52, 58, 64);
+}
+#shadow_table{
+box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
+}
+h4 {
+  font-size: 1.1em;
+}
+{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+<div>
+    {% if messages %}
+    <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+        <h4><b>{{ message }}</b></h4>
+    </div>
+    {% endfor %}
+    <hr class="line">
+    {% endif %}
+
+</div>
+
+
+<div class="myDiv">
+    <form method="get">
+        <div class="container">
+            <br>
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Select Course</h4>
+                    <select class="form-select" aria-label="Default select example" name="course">
+                        <option disabled="disabled" selected="selected">--Choose Your Course</option>
+                        <option> BSc.Computer Science</option>
+                        <option> BSc.Computer Application</option>
+                        <option> BSc.IT Cyber Crime</option>
+                        <option> BCom</option>
+                        <option> BBA</option>
+                        <option> MBA</option>
+                        <option> MSc.Computer Science</option>
+                        <option> MSc.Computer Application</option>
+                    </select>
+                </div>
+            </div>
+            <hr class="line">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Any specific date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE">
+                        <option disabled="disabled" selected="selected">--Today's date is default</option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <hr class="line">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </form>
+</div>
+
+<br>
+<hr class="line">
+
+<div class="container">
+    <div class="column_simple">
+        {% if table1 %}
+        <div id="lg1" class="alert-alert-danger" role="alert">
+            <h4><b>COURSE : {{course}}</b></h4>
+            <h4><b>DAY : {{day}}</b></h4>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="column_simple">
+        {% if table1 %}
+        <a href="{% url 'page:timetable_excel' %}?course={{course}}&date={{user_date}}">
+            <button type="submit" class="btn btn-danger">Get Excel</button>
+        </a>
+        <a href="{% url 'page:timetable_pdf' %}?course={{course}}&date={{user_date}}">
+            <button type="submit" class="btn btn-danger">Get Pdf</button>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<br>
+
+<div class="container">
+    {% if table1 %}
+    <hr class="line_solid">
+
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">{{head1}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch</b></td>
+            {% for x in table1 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Location</b></td>
+            {% for x in area1 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch time</b></td>
+            {% for x in batch_time1 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Distinct count</b></td>
+            {% for x in dist_count1 %}
+            <td scope="row"><b>{{x.0}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+        {% if person_list1 %}
+        <tbody>
+        {% for subject in person_list1 %}
+        <tr class="normal_row">
+            <td scope="row"><b></b></td>
+            {% for x in subject %}
+            <td scope="row"><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></td>
+            {% endfor %}
+        </tr>
+
+        {% endfor %}
+        </tbody>
+        {% endif %}
+
+    </table>
+    {% endif %}
+
+
+
+    {% if table2 %}
+    <hr class="line_solid">
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">{{head2}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch</b></td>
+            {% for x in table2 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Location</b></td>
+            {% for x in area2 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch time</b></td>
+            {% for x in batch_time2 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Distinct count</b></td>
+            {% for x in dist_count2 %}
+            <td scope="row"><b>{{x.0}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+        {% if person_list2 %}
+        <tbody>
+        {% for subject in person_list2 %}
+        <tr class="normal_row">
+            <td scope="row"><b></b></td>
+            {% for x in subject %}
+            <td scope="row"><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></td>
+            {% endfor %}
+        </tr>
+
+        {% endfor %}
+        </tbody>
+        {% endif %}
+
+    </table>
+    {% endif %}
+
+
+
+    {% if table3 %}
+    <hr class="line_solid">
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">{{head3}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch</b></td>
+            {% for x in table3 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Location</b></td>
+            {% for x in area3 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch time</b></td>
+            {% for x in batch_time3 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Distinct count</b></td>
+            {% for x in dist_count3 %}
+            <td scope="row"><b>{{x.0}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+        {% if person_list3 %}
+        <tbody>
+        {% for subject in person_list3 %}
+        <tr class="normal_row">
+            <td scope="row"><b></b></td>
+            {% for x in subject %}
+            <td scope="row"><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></td>
+            {% endfor %}
+        </tr>
+
+        {% endfor %}
+        </tbody>
+        {% endif %}
+
+    </table>
+    {% endif %}
+
+
+
+    {% if table4 %}
+    <hr class="line_solid">
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">{{head4}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch</b></td>
+            {% for x in table4 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Location</b></td>
+            {% for x in area4 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Batch time</b></td>
+            {% for x in batch_time4 %}
+            <td scope="row"><b>{{x}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+
+        <tbody>
+        <tr class="row_color">
+            <td scope="row"><b>Distinct count</b></td>
+            {% for x in dist_count4 %}
+            <td scope="row"><b>{{x.0}}</b></td>
+            {% endfor %}
+        </tr>
+        </tbody>
+        {% if person_list4 %}
+        <tbody>
+        {% for subject in person_list4 %}
+        <tr class="normal_row">
+            <td scope="row"><b></b></td>
+            {% for x in subject %}
+            <td scope="row"><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></td>
+            {% endfor %}
+        </tr>
+
+        {% endfor %}
+        </tbody>
+        {% endif %}
+
+    </table>
+    {% endif %}
+</div>
+{% else %}
+<div>
+    <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
+</div>
+{% endif %}
+<br><br><br>
+
+{% endblock %}

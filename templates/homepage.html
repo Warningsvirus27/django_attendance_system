@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+<main role="main">
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">RFID ATTENDANCE SYSTEM</h1>
+            <p>Hello
+                {% if not user.first_name and not user.last_name %}
+                <b>{{user.username}}</b>
+                {% else %}
+                <b>{{user.first_name}} {{user.last_name}} </b>
+                {% endif %}
+                , Select the field you want to search for.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-4">
+                <h2>REGISTER NEW RFID ID</h2>
+                <p>The RFID system reads the tag(id card) and enters the respective id into the database, and so the
+                    attendance is made.
+                    The particular ID also represent the identity of the individual.</p>
+                <p><a class="btn btn-primary" href="{% url 'page:register' %}" role="button">REGISTER</a></p>
+            </div>
+            <div class="col-md-4">
+                <h2>TRACE A PERSON</h2>
+                <p>The RFID attendance system can trace a person based on his/her tag(id card),
+                    Track records can be seen here.
+                    Incomplete attendance/Irregularities in attendance; can also be seen here</p>
+                <p><a class="btn btn-primary" href="{% url 'page:trace' %}" role="button">TRACE</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>TIME-TABLE COUNT</h2>
+                <p>The RFID attendance system counts the students attendance in any Lab for particular time.
+                    Here we can get the timetable wise count for any course.</p>
+                <p><a class="btn btn-primary" href="{% url 'page:timetable_wise_count' %}" role="button">TIMETABLE
+                    COUNT</a></p>
+            </div>
+            <div class="col-md-4">
+                <h2>TIME-WISE COUNT</h2>
+                <p>The RFID attendance system counts the students in the class present at given time.
+                    Here we can get the time-wise count for any Class/Lab.</p>
+                <p><a class="btn btn-primary" href="{% url 'page:time_wise_count' %}" role="button">TIMEWISE COUNT</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+
+    <hr>
+
+</main>
+
+{% else %}
+<div>
+    <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
+</div>
+{% endif %}
+
+{% endblock %}

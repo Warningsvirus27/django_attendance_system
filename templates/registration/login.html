@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+</head>
+<body>
+<form method="post">
+    {% csrf_token %}
+    <label>username</label><br>
+    <input type="text" name="username" required><br>
+    <label>password</label><br>
+    <input type="text" name="password" required><br>
+    <p>To change password or to reset any information, contact the admin</p><br>
+
+    <button class="submit" type = "submit">SUBMIT</button>
+
+</form>
+
+</body>
+</html>

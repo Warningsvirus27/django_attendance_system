@@ -1,0 +1,333 @@
+{% extends 'base.html' %}
+
+
+{% block style %}
+* {
+box-sizing: border-box;
+}
+.container {
+overflow: hidden;
+max-width : 95%;
+}
+.column {
+float: left;
+width: 33.33%;
+height : auto;
+padding: 10px;
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+margin: auto;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+.column_simple {
+float: left;
+width: 50%;
+height : auto;
+padding: 10px;
+text-align: left;
+margin: auto;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+.name{
+color: white;
+}
+.line{
+border-top: 1px dashed white;
+}
+#row_color
+{
+background-color: rgba(47, 142, 245);
+}
+#normal_row{
+background-color : rgba(146, 156, 143);
+}
+td {
+  border-right: solid 2px rgba(52, 58, 64);
+  border-left: solid 2px rgba(52, 58, 64);
+}
+#shadow_table{
+box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
+}
+h4 {
+  font-size: 1.1em;
+}
+{% endblock %}
+
+
+{% block content %}
+
+{% if user.is_authenticated %}
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+    <h4><b>{{ message }}</b></h4>
+    {% endfor %}
+</div>
+<hr class="line">
+{% endif %}
+
+
+<div class="container">
+    <br>
+    <!--<div class="row">-->
+    <div class="column">
+        <form method="get" action="{% url 'page:trace' %}<1>">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Enter Your TAG ID.</h4>
+                    <input type="text" name="TAG_ID" class="form-control" placeholder="Tag ID"
+                           aria-label="Tag id" autocomplete="off" required>
+                </div>
+            </div>
+
+            <hr class="line">
+
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Any specific date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE">
+                        <option class="lg" disabled="disabled" selected="selected">Today's date is default
+                        </option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <hr class="line">
+
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="column">
+        <form method="get" action="{% url 'page:trace' %}<2>">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Enter Roll Number.</h4>
+                    <input type="text" name="roll_no" class="form-control" placeholder="Roll No"
+                           aria-label="roll no" autocomplete="off" required>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Enter Division.</h4>
+                    <input type="text" name="division" class="form-control" placeholder="Division"
+                           aria-label="division" autocomplete="off" required>
+                </div>
+            </div>
+
+            <hr class="line">
+
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Select Course.</h4>
+                    <select class="form-select" aria-label="Default select example" name="course">
+                        <option disabled="disabled" selected="selected">--Choose Your Course</option>
+                        <option> BSc.Computer Science</option>
+                        <option> BSc.Computer Application</option>
+                        <option> BSc.IT Cyber Crime</option>
+                        <option> BCom</option>
+                        <option> BBA</option>
+                        <option> MBA</option>
+                        <option> MSc.Computer Science</option>
+                        <option> MSc.Computer Application</option>
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Any specific date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE">
+                        <option class="lg" disabled="disabled" selected="selected">Today's date is default
+                        </option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <hr class="line">
+
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </form>
+    </div>
+
+
+    <div class="column">
+        <form method="get" action="{% url 'page:trace' %}<3>">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Teacher Name.</h4>
+                    <select class="form-select" aria-label="Default select example" name="t_name">
+                        <option disabled="disabled" selected="selected">--Choose Teacher</option>
+                        {% for t_obj in t_list %}
+                        <option>{{t_obj.t_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <hr class="line">
+
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Any specific date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE">
+                        <option class="lg" disabled="disabled" selected="selected">Today's date is default
+                        </option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <hr class="line">
+
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--</div>-->
+</div>
+
+
+<div class="container">
+    <br>
+    <hr class="line">
+
+    <div class="column_simple">
+        {% if origin == 'student' %}
+        {% if person_data %}
+
+        {% for obj in person_data %}
+        <h4><b>NAME : {{obj.name}}</b></h4>
+        <h4><b>TAG ID : {{obj.tag_id}}</b></h4>
+        <h4><b>COURSE : {{obj.course}}</b></h4>
+        <h4><b>ACADEMIC YEAR : {{obj.year}}</b></h4>
+        <h4><b>ROLL NO : {{obj.roll}}</b></h4>
+        <h4><b>DIVISION : {{obj.div}}</b></h4>
+        <h4><b>DATE : {{user_date}}</b></h4>
+
+
+        {% endfor %}
+        {% endif %}
+        {% endif %}
+
+
+        {% if origin == 'teacher' %}
+        {% if person_data %}
+
+        {% for obj in person_data %}
+        <h4><b>NAME : {{obj.t_name}}</b></h4>
+        <h4><b>TAG ID : {{obj.tag_id}}</b></h4>
+        <h4><b>COURSE : {{obj.course}}</b></h4>
+        <h4><b>PRACTICAL SUBJECT : {{obj.practical_subject}}</b></h4>
+        <h4><b>DATE : {{user_date}}</b></h4>
+
+        {% endfor %}
+        {% endif %}
+        {% endif %}
+    </div>
+
+
+    <div class="column_simple">
+        {% for obj in person_data %}
+        {% if origin == 'student' or origin == 'teacher' %}
+
+        <a href="{% url 'page:trace_excel' %}?TAG_ID={{obj.tag_id}}&DATE={{user_date}}">
+            <button type="submit" class="btn btn-danger">Get Excel</button>
+        </a>
+        <a href="{% url 'page:trace_pdf' %}?TAG_ID={{obj.tag_id}}&DATE={{user_date}}">
+            <button type="submit" class="btn btn-danger">Get Pdf</button>
+        </a>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+<br>
+
+
+<div class="container">
+    {% if table_data %}
+    <hr class="line">
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">SR.NO</th>
+            <th scope="col">PLACE</th>
+            <th scope="col">TIME</th>
+            <th scope="col">STATUS</th>
+        </tr>
+        </thead>
+
+        {% for srno, area, time, status in table_data %}
+        <tbody>
+        {% if status == 'OUT' %}
+        <tr id="row_color">
+            <th scope="row">{{srno}}</th>
+            <td><b>{{area}}</b></td>
+            <td><b>{{time}}</b></td>
+            <td><b>{{status}}</b></td>
+        </tr>
+        {% else %}
+        <tr id="normal_row">
+            <th scope="row">{{srno}}</th>
+            <td><b>{{area}}</b></td>
+            <td><b>{{time}}</b></td>
+            <td><b>{{status}}</b></td>
+        </tr>
+        {% endif %}
+        </tbody>
+        {% endfor %}
+    </table>
+
+    {% else %}
+    {% if origin == 'student' %}
+    <hr class="line">
+    <h4>
+        {{person_data.0.name}} has no records for {{user_date}}
+    </h4>
+    {% elif origin == 'teacher' %}
+    <hr class="line">
+    <h4>
+        {{person_data.0.t_name}} has no records for {{user_date}}
+    </h4>
+    {% endif %}
+</div>
+{% endif %}
+<br><br>
+{% else %}
+<div>
+    <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
+</div>
+{% endif %}
+{% endblock %}

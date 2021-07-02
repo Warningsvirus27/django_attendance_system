@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br>
+<br>
+<h1 class="t1">HOW IT WORKS</h1>
+<p class="t">
+Faraday's principle of magnetic induction is the basis of near-field coupling
+between a Reader and Tag. </p>
+<p class="t">A Reader passes a large alternating current through
+a reading coil, resulting in an alternating magnetic field in its locality. </p>
+<p class="t">If you place a Tag that incorporates a smaller coil in this
+field, an alternating voltage will appear across it. If this voltage is rectified
+and coupled to a capacitor, a reservoir of charge accumulates, which you can then
+use to power the Tag chip.</p>
+<p class="t">Tags that use near-field coupling send data back to the Reader using-load modulation.
+This current is proportional to the load
+applied to the Tag's coil (hence load modulation).</p>
+<p class="t">RFID Tags based on far-field
+ emissions capture EM waves propagating from a dipole antenna
+attached to the Reader. A smaller dipole antenna in the Tag receives this
+energy as an alternating potential difference that appears across the arms
+of the dipole. </p>
+<p class="t">A diode can rectify this potential and link it to a capacitor,
+which will result in an accumulation of energy in order to power its electronics.
+However, unlike the inductive designs, the Tags beyond the range of the Reader's
+near field, can't transmitted information back to the Reader using load
+modulation.
+</p>
+
+{% endblock %}

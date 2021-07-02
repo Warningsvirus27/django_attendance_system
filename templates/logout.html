@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block style %}
+.container {
+overflow: hidden;
+max-width : 95%;
+}
+.column {
+float: left;
+width: 95%;
+height : auto;
+padding: 10px;
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+margin: auto;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+h1 {
+  font-size: 2.1em;
+color: white;
+}
+h2 {
+  font-size: 1.5em;
+color: white;
+}
+{% endblock %}
+
+
+{% block logout %}
+<br><br>
+<div class="container">
+    <div class="column">
+        <div class="row">
+            <div class="col">
+                <br>
+                <h1>You have been successfully logged out.</h1>
+                <hr>
+                <h2>Click <a href="{% url 'login' %}">here</a> to Sign In again</h2>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

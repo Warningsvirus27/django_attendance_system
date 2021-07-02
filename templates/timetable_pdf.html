@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+    </style>
+</head>
+<body>
+<font size="+2"><b>Showing Timetable Count for : {{user_date}}</b></font><br>
+<font size="+2"><b>Day : {{day}}</b></font><br>
+<font size="+2"><b>Course : {{course}}</b></font><br>
+<br>
+
+{% if table1 %}
+<table>
+    <tr>
+        <th scope="col" bgcolor="grey">{{head1}}</th>
+    </tr>
+    <tbody>
+    <tr>
+        <th><b>Batch</b></th>
+        {% for x in table1 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Location</b></th>
+        {% for x in area1 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Batch time</b></th>
+        {% for x in batch_time1 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Distinct count</b></th>
+        {% for x in dist_count1 %}
+        <th><b>{{x.0}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+    {% if person_list1 %}
+    <tbody>
+    {% for subject in person_list1 %}
+    <tr>
+        <th><b></b></th>
+        {% for x in subject %}
+        <th><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></th>
+        {% endfor %}
+    </tr>
+
+    {% endfor %}
+    </tbody>
+    {% endif %}
+</table>
+{% endif %}
+<br><br><br>
+
+{% if table2 %}
+<table>
+    <tr>
+        <th scope="col" bgcolor="grey">{{head2}}</th>
+    </tr>
+    <tbody>
+    <tr>
+        <th><b>Batch</b></th>
+        {% for x in table2 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Location</b></th>
+        {% for x in area2 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Batch time</b></th>
+        {% for x in batch_time2 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Distinct count</b></th>
+        {% for x in dist_count2 %}
+        <th><b>{{x.0}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+    {% if person_list2 %}
+    <tbody>
+    {% for subject in person_list2 %}
+    <tr>
+        <th><b></b></th>
+        {% for x in subject %}
+        <th><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></th>
+        {% endfor %}
+    </tr>
+
+    {% endfor %}
+    </tbody>
+    {% endif %}
+</table>
+{% endif %}
+<br><br><br>
+{% if table3 %}
+<table>
+    <tr>
+        <th scope="col" bgcolor="grey">{{head3}}</th>
+    </tr>
+    <tbody>
+    <tr>
+        <th><b>Batch</b></th>
+        {% for x in table3 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Location</b></th>
+        {% for x in area3 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Batch time</b></th>
+        {% for x in batch_time3 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Distinct count</b></th>
+        {% for x in dist_count3 %}
+        <th><b>{{x.0}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+    {% if person_list3 %}
+    <tbody>
+    {% for subject in person_list3 %}
+    <tr>
+        <th><b></b></th>
+        {% for x in subject %}
+        <th><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></th>
+        {% endfor %}
+    </tr>
+
+    {% endfor %}
+    </tbody>
+    {% endif %}
+</table>
+{% endif %}
+<br><br><br>
+{% if table4 %}
+<table>
+    <tr>
+        <th scope="col" bgcolor="grey">{{head4}}</th>
+    </tr>
+    <tbody>
+    <tr>
+        <th><b>Batch</b></th>
+        {% for x in table4 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Location</b></th>
+        {% for x in area4 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Batch time</b></th>
+        {% for x in batch_time4 %}
+        <th><b>{{x}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+
+    <tbody>
+    <tr>
+        <th><b>Distinct count</b></th>
+        {% for x in dist_count4 %}
+        <th><b>{{x.0}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+    {% if person_list4 %}
+    <tbody>
+    {% for subject in person_list4 %}
+    <tr>
+        <th><b></b></th>
+        {% for x in subject %}
+        <th><b>{{x.0.0}} {{x.0.1}}-{{x.0.2}}</b></th>
+        {% endfor %}
+    </tr>
+
+    {% endfor %}
+    </tbody>
+    {% endif %}
+</table>
+{% endif %}
+
+</body>
+</html>

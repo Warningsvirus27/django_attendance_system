@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Pdf rfid</title>
+    <style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+
+    </style>
+</head>
+
+<body>
+<br><br>
+
+{% if courses %}
+<div>
+    <h4>RECORDS FROM : {{today}} - {{last_date}}</h4>
+</div>
+
+{% for course,data in courses.items %}
+<div id="lg1" class="alert-alert-danger" role="alert">
+    <h4>COURSE : {{course}}</h4>
+</div>
+
+
+<table align="center">
+    <thead>
+    <tr>
+        <th scope="col" bgcolor="blue">{{course}}</th>
+    </tr>
+    </thead>
+
+    {% for batches,records in data.items %}
+    <tbody>
+    <tr>
+        <th scope="row" bgcolor="grey" align="center"><b>{{batches}}</b></th>
+        {% for head in table_head %}
+        <th scope="row" bgcolor="grey" align="center"><b>{{head}}</b></th>
+        {% endfor %}
+    </tr>
+    </tbody>
+    {% for std in records %}
+    <tbody>
+
+    <tr>
+        {% for data in std %}
+        <th scope="row"><b></b></th>
+        {% for m in data %}
+        <th scope="row"><b>{{m}}</b></th>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+
+
+    </tbody>
+    {% endfor %}
+    {% endfor %}
+</table>
+<br>
+{% endfor %}
+{% endif %}
+</body>
+</html>

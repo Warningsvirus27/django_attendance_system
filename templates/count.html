@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block style %}
+.container {
+overflow: hidden;
+max-width : 95%;
+}
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+width : 900px;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+.column_simple {
+float: left;
+width: 50%;
+height : auto;
+padding: 10px;
+text-align: left;
+margin: auto;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+.name{
+color: white;
+}
+.name_message{
+color: black;
+}
+.line{
+border-top: 1px dashed white;
+}
+td {
+border-right: solid 2px rgba(52, 58, 64);
+border-left: solid 2px rgba(52, 58, 64);
+}
+#shadow_table{
+box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
+}
+.line_solid{
+border-top: 5px solid red;
+}
+.normal_row{
+background-color : rgba(146, 156, 143);
+}
+h4 {
+font-size: 1.1em;
+}
+{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated %}
+
+<div class="myDiv">
+    <div class="container">
+        <br>
+        <form method="get">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">PLACE</h4>
+                    <select class="form-select" aria-label="Default select example" name="AREA">
+                        <option disabled="disabled" selected="selected">--Choose Place</option>
+                        <option> Computer Lab 1-a</option>
+                        <option> Computer Lab 1-b</option>
+                        <option> Computer Lab 2-a</option>
+                        <option> Computer Lab 2-b</option>
+                        <option> Computer Lab 3-a</option>
+                        <option> Computer Lab 3-b</option>
+                        <option> Computer Lab 4-a</option>
+                        <option> Computer Lab 4-b</option>
+                        <option> Electronics lab</option>
+                        <option> Sports Room</option>
+                        <option> Library</option>
+                    </select>
+                </div>
+            </div>
+            <hr class="line">
+            <div class="row">
+                <h4 class="name">SELECT TIME</h4>
+                <label class="name">START TIME</label>
+                <div class="col">
+                    <input type="text" name="START_TIME" class="form-control" placeholder="Hours"
+                           aria-label="Tag id" autocomplete="off">
+                </div>
+                <div class="col">
+                    <input type="text" name="START_MINUTE" class="form-control" placeholder="Minutes"
+                           aria-label="Tag id" autocomplete="off">
+                </div>
+            </div>
+            <div class="row">
+                <label class="name">END TIME</label>
+                <div class="col">
+                    <input type="text" name="LAST_TIME" class="form-control" placeholder="Hours"
+                           aria-label="Tag id" autocomplete="off">
+                </div>
+                <div class="col">
+                    <input type="text" name="END_MINUTE" class="form-control" placeholder="Minutes"
+                           aria-label="Tag id" autocomplete="off">
+                </div>
+            </div>
+            <hr class="line">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Any specific date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE">
+                        <option disabled="disabled" selected="selected">--Today's date is default</option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <hr class="line">
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <hr class="line">
+    <div class="column_simple">
+        {% if messages %}
+        {% for message in messages %}
+        <h4 class="name_message"><b>{{ message }}</b></h4>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="column_simple">
+        {% if person_list or teacher_list%}
+        <a href="{% url 'page:excel-time_wise_excel' %}?area={{area}}&s_t={{start_time}}&s_m={{start_minute}}&e_t={{end_time}}&e_m={{end_minute}}&date={{user_date}}">
+            <button type="submit" class="btn btn-danger">Get Excel</button>
+        </a>
+        <a href="{% url 'page:time_wise_pdf' %}?area={{area}}&s_t={{start_time}}&s_m={{start_minute}}&e_t={{end_time}}&e_m={{end_minute}}&date={{user_date}}">
+            <button type="submit" class="btn btn-danger">Get Pdf</button>
+        </a>
+        {% endif %}
+    </div>
+</div>
+<hr class="line">
+
+<div class="container">
+    <div class="column_simple">
+        {% if distinct_count %}
+        <div class="alert alert-danger">
+            <div class="text-center">
+                <h4 class="name_message">Distinct Count : {{ distinct_count }}</h4>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <div class="column_simple">
+        {% if total_count %}
+        <div class="alert alert-danger">
+            <div class="text-center">
+                <h4 class="name_message">Total Count : {{ total_count }}</h4>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+{% if person_list %}
+<hr class="line_solid">
+<br>
+<div class="container">
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="row">SR. NO</th>
+            <th scope="row">TAG ID</th>
+            <th scope="row">NAMES</th>
+            <th scope="row">COURSE</th>
+            <th scope="row">ROLL NUMBER</th>
+            <th scope="row">DIVISION</th>
+            <th scope="row">TIME</th>
+            <th scope="row">STATUS</th>
+        </tr>
+        </thead>
+
+        {% for srno,tag_id,name,course,roll,div,time, status in person_list %}
+        <tbody>
+        <tr class="normal_row">
+            <td scope="row"><b>{{srno}}</b></td>
+            <td scope="row"><b>{{tag_id}}</b></td>
+            <td scope="row"><b>{{name}}</b></td>
+            <td scope="row"><b>{{course}}</b></td>
+            <td scope="row"><b>{{roll}}</b></td>
+            <td scope="row"><b>{{div}}</b></td>
+            <td scope="row"><b>{{time}}</b></td>
+            <td scope="row"><b>{{status}}</b></td>
+        </tr>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+
+{% if teacher_list %}
+<hr class="line_solid">
+<br>
+<div class="container">
+    <table class="table" align="center" id="shadow_table">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="row">SR. NO</th>
+            <th scope="row">TAG ID</th>
+            <th scope="row">NAMES</th>
+            <th scope="row">COURSE</th>
+            <th scope="row">PRACTICAL SUBJECT</th>
+            <th scope="row">TIME</th>
+            <th scope="row">STATUS</th>
+        </tr>
+        </thead>
+
+        {% for srno, tag, name, course, practical_subject, time, status in teacher_list %}
+        <tbody>
+        <tr class="normal_row">
+            <td scope="row"><b>{{srno}}</b></td>
+            <td scope="row"><b>{{tag}}</b></td>
+            <td scope="row"><b>{{name}}</b></td>
+            <td scope="row"><b>{{course}}</b></td>
+            <td scope="row"><b>{{practical_subject}}</b></td>
+            <td scope="row"><b>{{time}}</b></td>
+            <td scope="row"><b>{{status}}</b></td>
+        </tr>
+        </tbody>
+        {% endfor %}
+        {% endif %}
+    </table>
+</div>
+
+{% if not person_list and not teacher_list and user_date %}
+<div class="container">
+    <h3 class="name_message">
+        NO RECORDS FOR {{user_date}}
+    </h3>
+</div>
+
+{% endif %}
+<br><br>
+
+{% else %}
+
+<div>
+    <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
+</div>
+{% endif %}
+{% endblock %}
