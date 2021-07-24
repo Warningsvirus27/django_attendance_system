@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
 
+
 {% block style %}
 .container {
 overflow: hidden;
-max-width : 95%;
+max-width : 90%;
 }
 div.myDiv {
 border: 1px outset black;
 background-color: rgba(52, 58, 64);
 text-align: left;
-width : 900px;
+width : 95%;
 margin: auto;
 margin-top: 1em;
 margin-bottom: 1em;
@@ -37,6 +38,12 @@ border-top: 1px dashed white;
 td {
 border-right: solid 2px rgba(52, 58, 64);
 border-left: solid 2px rgba(52, 58, 64);
+}
+.table_width_control {
+  width: 100%;
+  height: auto;
+  overflow-x: scroll;
+  scrollbar-width: thin;
 }
 #shadow_table{
 box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
@@ -176,35 +183,37 @@ font-size: 1.1em;
 <hr class="line_solid">
 <br>
 <div class="container">
-    <table class="table" align="center" id="shadow_table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="row">SR. NO</th>
-            <th scope="row">TAG ID</th>
-            <th scope="row">NAMES</th>
-            <th scope="row">COURSE</th>
-            <th scope="row">ROLL NUMBER</th>
-            <th scope="row">DIVISION</th>
-            <th scope="row">TIME</th>
-            <th scope="row">STATUS</th>
-        </tr>
-        </thead>
+    <div class="table_width_control" id="shadow_table">
+        <table class="table" align="center">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="row">SR. NO</th>
+                <th scope="row">TAG ID</th>
+                <th scope="row">NAMES</th>
+                <th scope="row">COURSE</th>
+                <th scope="row">ROLL NUMBER</th>
+                <th scope="row">DIVISION</th>
+                <th scope="row">TIME</th>
+                <th scope="row">STATUS</th>
+            </tr>
+            </thead>
 
-        {% for srno,tag_id,name,course,roll,div,time, status in person_list %}
-        <tbody>
-        <tr class="normal_row">
-            <td scope="row"><b>{{srno}}</b></td>
-            <td scope="row"><b>{{tag_id}}</b></td>
-            <td scope="row"><b>{{name}}</b></td>
-            <td scope="row"><b>{{course}}</b></td>
-            <td scope="row"><b>{{roll}}</b></td>
-            <td scope="row"><b>{{div}}</b></td>
-            <td scope="row"><b>{{time}}</b></td>
-            <td scope="row"><b>{{status}}</b></td>
-        </tr>
-        </tbody>
-        {% endfor %}
-    </table>
+            {% for srno,tag_id,name,course,roll,div,time, status in person_list %}
+            <tbody>
+            <tr class="normal_row">
+                <td scope="row"><b>{{srno}}</b></td>
+                <td scope="row"><b>{{tag_id}}</b></td>
+                <td scope="row"><b>{{name}}</b></td>
+                <td scope="row"><b>{{course}}</b></td>
+                <td scope="row"><b>{{roll}}</b></td>
+                <td scope="row"><b>{{div}}</b></td>
+                <td scope="row"><b>{{time}}</b></td>
+                <td scope="row"><b>{{status}}</b></td>
+            </tr>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
 </div>
 {% endif %}
 
@@ -213,34 +222,36 @@ font-size: 1.1em;
 <hr class="line_solid">
 <br>
 <div class="container">
-    <table class="table" align="center" id="shadow_table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="row">SR. NO</th>
-            <th scope="row">TAG ID</th>
-            <th scope="row">NAMES</th>
-            <th scope="row">COURSE</th>
-            <th scope="row">PRACTICAL SUBJECT</th>
-            <th scope="row">TIME</th>
-            <th scope="row">STATUS</th>
-        </tr>
-        </thead>
+    <div class="table_width_control" id="shadow_table">
+        <table class="table" align="center">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="row">SR. NO</th>
+                <th scope="row">TAG ID</th>
+                <th scope="row">NAMES</th>
+                <th scope="row">COURSE</th>
+                <th scope="row">PRACTICAL SUBJECT</th>
+                <th scope="row">TIME</th>
+                <th scope="row">STATUS</th>
+            </tr>
+            </thead>
 
-        {% for srno, tag, name, course, practical_subject, time, status in teacher_list %}
-        <tbody>
-        <tr class="normal_row">
-            <td scope="row"><b>{{srno}}</b></td>
-            <td scope="row"><b>{{tag}}</b></td>
-            <td scope="row"><b>{{name}}</b></td>
-            <td scope="row"><b>{{course}}</b></td>
-            <td scope="row"><b>{{practical_subject}}</b></td>
-            <td scope="row"><b>{{time}}</b></td>
-            <td scope="row"><b>{{status}}</b></td>
-        </tr>
-        </tbody>
-        {% endfor %}
-        {% endif %}
-    </table>
+            {% for srno, tag, name, course, practical_subject, time, status in teacher_list %}
+            <tbody>
+            <tr class="normal_row">
+                <td scope="row"><b>{{srno}}</b></td>
+                <td scope="row"><b>{{tag}}</b></td>
+                <td scope="row"><b>{{name}}</b></td>
+                <td scope="row"><b>{{course}}</b></td>
+                <td scope="row"><b>{{practical_subject}}</b></td>
+                <td scope="row"><b>{{time}}</b></td>
+                <td scope="row"><b>{{status}}</b></td>
+            </tr>
+            </tbody>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
 </div>
 
 {% if not person_list and not teacher_list and user_date %}

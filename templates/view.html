@@ -32,6 +32,12 @@ td {
 border-right: solid 2px rgba(52, 58, 64);
 border-left: solid 2px rgba(52, 58, 64);
 }
+.table_width_control{
+width: 100%;
+  height: auto;
+  overflow-x: scroll;
+  scrollbar-width: thin;
+}
 #shadow_table{
 box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
 }
@@ -61,8 +67,8 @@ box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
             <h4><b>{{data.0.0}}</b></h4>
         </div>
     </div>
-
-        <table class="table" align="center" id="shadow_table">
+    <div class="table_width_control" id="shadow_table">
+        <table class="table" align="center">
             <thead class="thead-dark">
             <tr>
                 {% for x in head %}

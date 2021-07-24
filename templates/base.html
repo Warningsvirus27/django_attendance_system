@@ -14,7 +14,7 @@
     <link rel="mask-icon" href="/docs/4.5/assets/img/favicons/safari-pinned-tab.svg" color="#563d7c">
     <meta name="theme-color" content="#563d7c">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width,initial-scale=1, shrink-to-fit=no">
     {% block head %}
     {% endblock %}
 
@@ -51,21 +51,13 @@ zoom:1.0;
               font-family:sans-serif;
               margin-top:40px;
            }
-nav{
-height:60px;
-}
 .myClass{
 font-size : 23px;
 }
 a {
   color: #00FFFF;
 }
-hr.style-two {
-    border: 0;
-    height: 1px;
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
-}
-#topnav a {
+#navbarMenu a {
   float: left;
   display: block;
   color: white;
@@ -75,25 +67,15 @@ hr.style-two {
   font-size: 17px;
   border-bottom: 3px solid transparent;
 }
-#mov_rt {
-margin-left: 500px;
-}
-#topnav a:hover {
+#navbarMenu a:hover {
   border-bottom: 3px solid red;
 }
 
-#topnav a.active {
+#navbarMenu a.active {
   border-bottom: 3px solid red;
 }
 {% block style %}
 {% endblock %}
-
-
-
-
-
-
-
 
 
 
@@ -172,15 +154,21 @@ margin-left: 500px;
                 <div class="collapse navbar-collapse" id="navbarMenu">
                     <!--<div class="collapse navbar-collapse" id="topnav">-->
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{% url 'page:what_is_rfid' %}">WHAT IS RFID</a>
-                        </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{% url 'page:how_it_works' %}">HOW IT WORKS</a>
-                        </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" href="{% url 'page:why_rfid' %}">WHY RFID</a>
-                        </li>
+                            <li class="nav-item active">
+                                <div class="text-center">
+                                <a class="nav-link" href="{% url 'page:what_is_rfid' %}">WHAT IS RFID</a>
+                                    </div>
+                            </li>
+                            <li class="nav-item active">
+                                <div class="text-center">
+                                <a class="nav-link" href="{% url 'page:how_it_works' %}">HOW IT WORKS</a>
+                                    </div>
+                            </li>
+                            <li class="nav-item active">
+                                <div class="text-center">
+                                <a class="nav-link" href="{% url 'page:why_rfid' %}">WHY RFID</a>
+                                    </div>
+                            </li>
                     </ul>
                 </div>
             </nav>
@@ -198,26 +186,6 @@ margin-left: 500px;
 </div>
 
 
-<script>
-    var count = 1;
-    function setColor(button, color) {
-        var property = document.getElementById(button);
-        if (count == 0) {
-            property.style.backgroundColor = "white"
-            property.style.color = "#36454f"
-            count = 1;
-        }
-        else {
-            property.style.backgroundColor = "white"
-	    property.style.color = "#36454f"
-            count = 0;
-        }
-   }
-
-
-
-
-</script>
 <!-- JavaScript Bundle with Popper -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
@@ -239,9 +207,9 @@ margin-left: 500px;
     <div class="column">
         <div class="row">
             <div class="col">
-                <h1>You have been successfully logged out.</h1>
+                <h1>You are not logged in.</h1>
                 <hr>
-                <h2>Click <a href="{% url 'login' %}">here</a> to Sign In again</h2>
+                <h2>Click <a href="{% url 'login' %}">here</a> to log in again</h2>
                 <br>
             </div>
         </div>

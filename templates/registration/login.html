@@ -2,20 +2,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <meta name="description" content="">
     <title>login</title>
+    <style>
+    body{
+              background-color: rgba(25, 55, 18, .3);
+              background-portion:center;
+              background-size:cover;
+              font-family:sans-serif;
+              margin-top:40px;
+           }
+        .container {
+overflow: hidden;
+max-width : 95%;
+}
+div.label
+{
+   margin: 0;
+   width: 70%;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+
+bottom: 0px;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+h4 {
+  font-size: 1.1em;
+  color: white;
+}
+.message{
+  color: white;
+}
+.line{
+border-top: 1px dashed white;
+}
+    </style>
 </head>
 <body>
-<form method="post">
-    {% csrf_token %}
-    <label>username</label><br>
-    <input type="text" name="username" required><br>
-    <label>password</label><br>
-    <input type="text" name="password" required><br>
-    <p>To change password or to reset any information, contact the admin</p><br>
 
-    <button class="submit" type = "submit">SUBMIT</button>
-
-</form>
+<div class="label">
+    <div class="myDiv">
+        <form method="post">
+            {% csrf_token %}
+            <div class="container">
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <h4 class="name">USERNAME.</h4>
+                        <input type="text" name="username" class="form-control" placeholder="Username"
+                               aria-label="division" autocomplete="off" required>
+                    </div>
+                </div>
+                <hr class="line">
+                <div class="row">
+                    <div class="col">
+                        <h4 class="name">PASSWORD.</h4>
+                        <input type="text" name="password" class="form-control" placeholder="Password"
+                               aria-label="division" autocomplete="off" required>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col">
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="line">
+                <div class="row">
+                    <div class="col">
+                        <p class="message">
+                            To change password or to reset any information, contact the admin
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>

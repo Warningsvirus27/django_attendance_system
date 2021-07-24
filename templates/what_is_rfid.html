@@ -1,22 +1,90 @@
 {% extends 'base.html' %}
+{% load static %}
+
+
+{% block style %}
+.container {
+overflow: hidden;
+max-width : 80%;
+}
+h1 {
+color: rgba(0, 123, 255);
+text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 1px 0 #000;
+}
+p
+{
+font-family: "Trebuchet MS", Verdana, sans-serif;
+color : white;
+}
+.c_color
+{
+color : rgba(0, 123, 255);
+}
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+width : 90%;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+.footer img{
+width: 100%;
+}
+.line{
+border-top: 1px dashed white;
+}
+{% endblock %}
+
 
 {% block content %}
 <br>
-<br>
-<h1 class="t1">WHAT IS RFID</h1>
-<p class="t">
-Radio Frequency Identification (RFID) refers to a wireless system comprised of
-two components: Tags and Readers.</p>
-<p class="t">The Reader is a device that has one or more antennas that emit Radio waves and
-receive signals back from the RFID Tag.</p>
-<p class="t">Tags, which use Radio waves to communicate their identity and other
-information to nearby Readers, can be passive or active.</p>
-<p class="t">Passive RFID Tags are powered by the Reader and do not have a battery.</p>
-<p class="t">Active RFID Tags are powered by batteries.</p>
-<p class="t">Radio Frequency Identification is used in conjunction with a microchip,
-a powered antenna, and a scanner.</p>
-<p class="t">Radio Frequency Identification works through a small electronic device,
-usually a microchip, that has information stored on it.
+<h1 class="text-center">WHAT IS RFID</h1>
+<div class="myDiv">
+    <div class="container">
+        <br>
+        <p>
+            Radio Frequency Identification (RFID) refers to a wireless system comprised of
+            two components: Tags and Readers.</p>
+        <hr class="line">
+        <p>The Reader is a device that has one or more antennas that emit Radio waves and
+            receive signals back from the RFID Tag.</p>
+        <hr class="line">
+        <div class="text-center">
+            <div class="footer">
+                <img src="{% static 'page/images/RFID_reader.jpg' %}" style="width:40%">
+            </div>
+        </div>
+        <hr class="line">
+        <p>Tags, which use Radio waves to communicate their identity and other
+            information to nearby Readers, can be passive or active.</p>
+        <p>Passive RFID Tags are powered by the Reader and do not have a battery.</p>
+        <p>Active RFID Tags are powered by batteries.</p>
+        <hr class="line">
+        <div class="row">
+            <div class="col">
+                <label class="c_color">Passive Tag</label>
+                <div class="footer">
+                    <img src="{% static 'page/images/RFID_tag.jpg' %}" style="width:70%">
+                </div>
+            </div>
+            <div class="col">
+                <label class="c_color">Active Tag</label>
+                <div class="footer">
+                    <img src="{% static 'page/images/active_tag.jpg' %}" style="width:70%">
+                </div>
+            </div>
+        </div>
+        <hr class="line">
+        <p>Radio Frequency Identification is used in conjunction with a microchip,
+            a powered antenna, and a scanner.</p>
+        <p>The Reader continuously emits signal into its environment, when an reader comes in its
+            reading range the unique identity number is read and identified by the reader.
+        </p>
+        <hr class="line">
+    </div>
+</div>
 
-</p>
 {% endblock %}

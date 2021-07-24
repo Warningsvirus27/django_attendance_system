@@ -12,7 +12,7 @@ div.myDiv {
 border: 1px outset black;
 background-color: rgba(52, 58, 64);
 text-align: left;
-width : 900px;
+width : 90%;
 margin: auto;
 margin-top: 1em;
 margin-bottom: 1em;
@@ -51,6 +51,12 @@ border-left: solid 2px rgba(52, 58, 64);
 }
 #shadow_table{
 box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
+}
+.table_width_control {
+  width: 100%;
+  height: auto;
+  overflow-x: scroll;
+  scrollbar-width: thin;
 }
 .name_message{
 color: black;
@@ -104,26 +110,28 @@ color: black;
 
 <div class="container">
     <div class="column_simple">
+        {% if courses %}
         <div class="alert alert-danger" role="alert">
-            {% if courses %}
             <h4 class="name_message"><b>RECORDS FROM : {{today}} - {{last_date}}</b></h4>
-            {% endif %}
         </div>
+        {% endif %}
     </div>
     <div class="column_simple">
+        {% if courses %}
         <a href="{% url 'page:weekly-monthly_excel_pdf' %}1/?date={{today}}&end_date={{last_date}}">
             <button type="submit" class="btn btn-danger">Get Excel</button>
         </a>
         <a href="{% url 'page:weekly-monthly_excel_pdf' %}2/?date={{today}}&end_date={{last_date}}">
             <button type="submit" class="btn btn-danger">Get Pdf</button>
         </a>
+        {% endif %}
     </div>
 </div>
 <br>
 
 
+{% if courses %}
 <div class="container">
-    {% if courses %}
     {% for course,data in courses.items %}
     <hr class="line_solid">
     <div class="alert alert-danger" role="alert">
@@ -131,49 +139,55 @@ color: black;
     </div>
     <br>
 
-    <table class="table" align="center" id="shadow_table">
-        <thead class="thead-dark">
-        <tr>
-            <th scope="col">{{course}}</th>
-        </tr>
-        </thead>
+    <div class="table_width_control" id="shadow_table">
+        <table class="table" align="center">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">{{course}}</th>
+            </tr>
+            </thead>
 
-        {% for batches,records in data.items %}
-        <tbody>
-        <tr class="row_color">
-            <th scope="row"><b>{{batches}}</b></th>
-            {% for head in table_head %}
-            <th scope="row"><b>{{head}}</b></th>
+            {% for batches,records in data.items %}
+            <tbody>
+            <tr class="row_color">
+                <th scope="row"><b>{{batches}}</b></th>
+                {% for head in table_head %}
+                <th scope="row"><b>{{head}}</b></th>
+                {% endfor %}
+            </tr>
+            </tbody>
+
+            <tbody>
+
+            {% for std in records %}
+            {% if not std %}
+            <tr class="normal_row">
+                <td scope="row"><b>No Recrods</b></td>
+            </tr>
+            {% else %}
+            <tr class="normal_row">
+                {% for data in std %}
+                <td scope="row"><b></b></td>
+                {% for m in data %}
+                <td scope="row"><b>{{m}}</b></td>
+                {% endfor %}
+
+            </tr>
             {% endfor %}
-        </tr>
-        </tbody>
-
-        <tbody>
-
-        {% for std in records %}
-        {% if not std %}
-        <tr class="normal_row">
-            <td scope="row"><b>No Recrods</b></td>
-        </tr>
-        {% else %}
-        <tr class="normal_row">
-            {% for data in std %}
-            <td scope="row"><b></b></td>
-            {% for m in data %}
-            <td scope="row"><b>{{m}}</b></td>
+            {% endif %}
             {% endfor %}
-
-        </tr>
-        {% endfor %}
-        {% endif %}
-        {% endfor %}
-        </tbody>
-        {% endfor %}
-    </table>
+            </tbody>
+            {% endfor %}
+        </table>
+    </div>
     <br>
     {% endfor %}
-    {% endif %}
 </div>
+{% elif not today %}
+<div class="container">
+    <h4 class="name_message">No Records</h4>
+</div>
+{% endif %}
 
 
 {% else %}

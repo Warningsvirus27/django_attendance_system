@@ -1,25 +1,107 @@
 {% extends 'base.html' %}
+{% load static %}
+
+
+{% block style %}
+.container {
+overflow: hidden;
+max-width : 80%;
+}
+h1 {
+color: rgba(0, 123, 255);
+text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 1px 0 #000;
+}
+p
+{
+font-family: "Trebuchet MS", Verdana, sans-serif;
+color : white;
+}
+.c_color
+{
+color : rgba(0, 123, 255);
+}
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+width : 90%;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+.footer img{
+width: 100%;
+}
+.line{
+border-top: 1px dashed white;
+}
+{% endblock %}
+
 
 {% block content %}
 <br>
-<br>
-<h1 class="t1">WHY RFID</h1>
-<p  class="t">
-1)The most notable is that RFID Tag data can be read outside the line-of-sight,
-    whereas barcodes must be aligned with an optical scanner.</p>
-<p  class="t">2)The Tag Reader is responsible for powering and communicating with a Tag.</p>
-<p  class="t">3)The encapsulation maintains the Tag's integrity
-and protects the antenna and chip from environmental conditions.</p>
-<p  class="t">---The encapsulation could be a small glass vial or a laminar
-plastic substrate with adhesive on one side.</p>
-<p  class="t">4)Two fundamentally different RFID design approaches exist for transferring
-power from the Reader to the Tag: magnetic induction and electromagnetic (EM)
-wave capture.</p>
-<p  class="t">---These two designs take advantage of the EM properties associated
-with an RF antenna—the-near field-and the-far field (The near field and far field are regions of the electromagnetic field (EM)).</p>
-<p  class="t">---Both can transfer enough power to a remote Tag to sustain its operation—typically between 10 μW and 1 mW,
-depending on the Tag type. (For comparison, the nominal power an Intel XScale
-processor consumes is approximately 500 mW, and an Intel Pentium 4 consumes up
-to 50 W.)</p>
+<div class="text-center">
+    <h1>WHY RFID</h1>
+</div>
+
+<div class="myDiv">
+    <div class="container">
+        <br>
+        <p>
+            1)The most notable is that RFID Tag data can be read outside the line-of-sight,
+            whereas barcodes must be aligned with an optical scanner.</p>
+        <hr class="line">
+        <div class="text-center">
+            <div class="footer">
+                <img src="{% static 'page/images/signal.png' %}" style="width:70%">
+            </div>
+        </div>
+        <hr class="line">
+
+        <p>2)The Tag Reader is responsible for powering and communicating with a Tag.</p>
+        <hr class="line">
+        <p>3)The encapsulation maintains the Tag's integrity
+            and protects the antenna and chip from environmental conditions.</p>
+        <p>---The encapsulation could be a small glass vial or a laminar
+            plastic substrate with adhesive on one side.</p>
+        <hr class="line">
+        <div class="row">
+            <div class="col">
+                <label class="c_color">Glass Tags</label>
+                <div class="footer">
+                    <img src="{% static 'page/images/glasstag.jpg' %}" style="width:70%">
+                </div>
+            </div>
+            <div class="col">
+                <label class="c_color">plastic Tags</label>
+                <div class="footer">
+                    <img src="{% static 'page/images/rfid-tags-3.png' %}"
+                         style="position:relative; left:-100px; top:50px; width: 130%;">
+                </div>
+            </div>
+        </div>
+        <hr class="line">
+
+        <p>4)Two fundamentally different RFID design approaches exist for transferring
+            power from the Reader to the Tag: magnetic induction and electromagnetic (EM)
+            wave capture.</p>
+        <p>---These two designs take advantage of the EM properties associated
+            with an RF antenna—the-near field-and the-far field (The near field and far field are regions of the
+            electromagnetic
+            field (EM)).</p>
+        <p>---Both can transfer enough power to a remote Tag to sustain its operation—typically between 10 μW
+            and 1
+            mW,
+            depending on the Tag type. (For comparison, the nominal power an Intel XScale
+            processor consumes is approximately 500 mW, and an Intel Pentium 4 consumes up
+            to 50 W.)</p>
+        <hr class="line">
+        <p>5)The working efficiency of RFID system. It generally works at 9600 baud rate (can be greater
+            depending on the module used).</p>
+        <hr class="line">
+    </div>
+</div>
+
 {% endblock %}
 
