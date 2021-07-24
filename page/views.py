@@ -1,13 +1,5 @@
 # the website is on an account for INDIRA COLLEGE OF COMMERCE AND SCIENCE made by STUDENTS OF SYBSC batch(2019-2022)
 # for RFID attendance system
-# ----------------------------------------The Member includes-------------------------------------------
-#                                         Sachin Purushottam Sharma      sybsc c_58
-#                                         Wasim Allauddin Shaikh         sybsc c_80
-#                                         Ankita Sharma                  sybsc c_11
-#                                         Zaid Shaikh                    sybsc c_22
-#                                         Ankit Singh                    sybsc c_09
-#                                         Shubham Shinde                 sybsc c_67
-#                                         Sakshi Sathe                   sybsc c_60
 
 
 # the module for the django project
