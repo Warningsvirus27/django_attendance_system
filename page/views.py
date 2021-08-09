@@ -1,4 +1,4 @@
-# the module for the django project
+# the module for the django project.
 from django.shortcuts import render, redirect, HttpResponse
 from .models import *
 from django.contrib import messages
