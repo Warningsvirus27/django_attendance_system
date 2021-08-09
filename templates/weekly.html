@@ -52,12 +52,6 @@ border-left: solid 2px rgba(52, 58, 64);
 #shadow_table{
 box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
 }
-.table_width_control {
-  width: 100%;
-  height: auto;
-  overflow-x: scroll;
-  scrollbar-width: thin;
-}
 .name_message{
 color: black;
 }
@@ -97,14 +91,16 @@ color: black;
 <br>
 <hr class="line">
 
-<div class="container">
+<div>
     {% if messages %}
-    <div class="alert-alert-danger" role="alert">
-        <b>{% for message in messages %}</b>
-        <b>{{ message }}</b>
-        {% endfor %}
+    <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+        <h4 class="name_message"><b>{{ message }}</b></h4>
     </div>
+    {% endfor %}
+    <hr class="line">
     {% endif %}
+
 </div>
 
 

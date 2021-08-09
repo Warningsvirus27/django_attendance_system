@@ -20,6 +20,7 @@ tr:nth-child(even) {
 }
 
 
+
     </style>
 </head>
 
@@ -32,13 +33,14 @@ tr:nth-child(even) {
 </div>
 
 {% for course,data in courses.items %}
-<div id="lg1" class="alert-alert-danger" role="alert">
+
+<div class="alert-alert-danger" role="alert">
     <h4>COURSE : {{course}}</h4>
 </div>
 
 
-<table align="center">
-    <thead>
+<table class="table" align="center">
+    <thead class="thead-dark">
     <tr>
         <th scope="col" bgcolor="blue">{{course}}</th>
     </tr>
@@ -47,14 +49,20 @@ tr:nth-child(even) {
     {% for batches,records in data.items %}
     <tbody>
     <tr>
-        <th scope="row" bgcolor="grey" align="center"><b>{{batches}}</b></th>
+        <th scope="row"><b>{{batches}}</b></th>
         {% for head in table_head %}
-        <th scope="row" bgcolor="grey" align="center"><b>{{head}}</b></th>
+        <th scope="row"><b>{{head}}</b></th>
         {% endfor %}
     </tr>
     </tbody>
-    {% for std in records %}
+
     <tbody>
+    {% for std in records %}
+    {% if not std %}
+    <tr class="normal_row">
+        <td scope="row"><b>No Recrods</b></td>
+    </tr>
+    {% else %}
 
     <tr>
         {% for data in std %}
@@ -64,10 +72,11 @@ tr:nth-child(even) {
         {% endfor %}
     </tr>
     {% endfor %}
-
-
-    </tbody>
+    {% endif %}
     {% endfor %}
+    </tbody>
+
+
     {% endfor %}
 </table>
 <br>

@@ -1,15 +1,3 @@
-# the website is on an account for INDIRA COLLEGE OF COMMERCE AND SCIENCE made by STUDENTS OF SYBSC batch(2019-2022)
-# for RFID attendance system
-# ----------------------------------------The Member includes-------------------------------------------
-#                                         Sachin Purushottam Sharma      sybsc c_58
-#                                         Wasim Allauddin Shaikh         sybsc c_80
-#                                         Ankita Sharma                  sybsc c_11
-#                                         Zaid Shaikh                    sybsc c_22
-#                                         Ankit Singh                    sybsc c_09
-#                                         Shubham Shinde                 sybsc c_67
-#                                         Sakshi Sathe                   sybsc c_60
-
-
 # the module for the django project
 from django.shortcuts import render, redirect, HttpResponse
 from .models import *
@@ -220,27 +208,27 @@ def weekly_monthly_excel_pdf(request, method=None):
             else:
                 return redirect('/weekly_data/')
     elif method == '2':
-        try:
-            # giving template path along with name
-            template_path = 'weekly_monthly_pdf.html'
-            # initializing pdf
-            response = HttpResponse(content_type='application/pdf')
-            # setting filename
-            # response['Content-Disposition'] = 'filename=filename.xls'   ##### for viewing the excel online
-            # response['Content-Disposition'] = 'attachment; filename=filename.xls'   ##### for downloading the excel
-            response['Content-Disposition'] = f'attachment; filename="rfid-{date.today()}.pdf"'
-            template = get_template(template_path)
-            html = template.render(content)
-            pisa_status = pisa.CreatePDF(html, dest=response)
-            if pisa_status.err:
-                return HttpResponse('We had some errors <pre>' + html + '</pre>')
-            return response
-        except:
-            messages.error(request, 'something went wrong please try again!')
-            if content['root'] == 'M':
-                return redirect('/monthly_data/')
-            else:
-                return redirect('/weekly_data/')
+        # try:
+        # giving template path along with name
+        template_path = 'weekly_monthly_pdf.html'
+        # initializing pdf
+        response = HttpResponse(content_type='application/pdf')
+        # setting filename
+        # response['Content-Disposition'] = 'filename=filename.xls'   ##### for viewing the excel online
+        # response['Content-Disposition'] = 'attachment; filename=filename.xls'   ##### for downloading the excel
+        response['Content-Disposition'] = f'attachment; filename="rfid-{date.today()}.pdf"'
+        template = get_template(template_path)
+        html = template.render(content)
+        pisa_status = pisa.CreatePDF(html, dest=response)
+        if pisa_status.err:
+            return HttpResponse('We had some errors <pre>' + html + '</pre>')
+        return response
+        '''except:
+        messages.error(request, 'something went wrong please try again!')
+        if content['root'] == 'M':
+            return redirect('/monthly_data/')
+        else:
+            return redirect('/weekly_data/')'''
 
 
 def monthly_data(requests):

@@ -34,9 +34,9 @@ border-left: solid 2px rgba(52, 58, 64);
 }
 .table_width_control{
 width: 100%;
-  height: auto;
-  overflow-x: scroll;
-  scrollbar-width: thin;
+height: auto;
+overflow-x: scroll;
+scrollbar-width: thin;
 }
 #shadow_table{
 box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
@@ -58,46 +58,50 @@ box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
 
 <div class="container">
     <div class="column_simple">
+
         {% for course,data in course.items %}
 
         <hr class="line">
 
         <div class="col">
-        <div class="alert alert-danger" role="alert">
-            <h4><b>{{data.0.0}}</b></h4>
+            <div class="alert alert-danger" role="alert">
+                <h4><b>{{data.0.0}}</b></h4>
+            </div>
         </div>
-    </div>
-    <div class="table_width_control" id="shadow_table">
-        <table class="table" align="center">
-            <thead class="thead-dark">
-            <tr>
-                {% for x in head %}
-                <th scope="row"><b>{{x}}</b></th>
+
+        <div class="table_width_control" id="shadow_table">
+            <table class="table" align="center">
+                <thead class="thead-dark">
+                <tr>
+                    {% for x in head %}
+                    <th scope="row"><b>{{x}}</b></th>
+                    {% endfor %}
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for y in data %}
+                <tr class="normal_row">
+
+                    {% for m in y %}
+                    <td scope="row"><b>{{m}}</b></td>
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            </thead>
 
-            <tbody>
-            {% for y in data %}
-            <tr class="normal_row">
-
-                {% for m in y %}
-                <td scope="row"><b>{{m}}</b></td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
         <br>
-        {% endfor %}
-    </div>
-</div>
 
-{% else %}
-<div>
-    <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
-</div>
-<br><br><br>
-{% endif %}
-{% endblock %}
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div>
+        <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>
+    </div>
+    <br><br><br>
+    {% endif %}
+    {% endblock %}

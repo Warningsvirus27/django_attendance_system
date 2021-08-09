@@ -41,6 +41,7 @@ class SaveAttendanceThread(threading.Thread):
                         iterator = 0
 
                         for student in students:
+                            print('checking')
                             for individual in student:
                                 status = self.check_existence(course[0], year[0], individual, batches[iterator],
                                                               location[iterator], user_date, day)
