@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-=======
-# the website is on an account for INDIRA COLLEGE OF COMMERCE AND SCIENCE made by STUDENTS OF SYBSC batch(2019-2022)
-# for RFID attendance system
-
-
->>>>>>> c06a3720f9eba54995fe510071c25732ab753e4f
 # the module for the django project
 from django.shortcuts import render, redirect, HttpResponse
 from .models import *
