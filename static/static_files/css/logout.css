@@ -1,0 +1,25 @@
+.container {
+overflow: hidden;
+max-width : 95%;
+}
+.column {
+float: left;
+width: 95%;
+height : auto;
+padding: 10px;
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+margin: auto;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+h1 {
+  font-size: 2.1em;
+color: white;
+}
+h2 {
+  font-size: 1.5em;
+color: white;
+}

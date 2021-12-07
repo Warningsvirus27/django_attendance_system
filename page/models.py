@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 
 course_choices = [
     ("BSc.Computer Science", "BSc.Computer Science"),
@@ -31,7 +31,7 @@ class Register(models.Model):
     div = models.CharField(max_length=3)
     roll = models.IntegerField()
     name = models.CharField(max_length=80)
-    course = models.CharField(max_length=30)
+    course = models.CharField(max_length=30, choices=course_choices)
     year = models.CharField(max_length=3)
 
     def __str__(self):
@@ -42,21 +42,25 @@ class TeacherRegister(models.Model):
     t_name = models.CharField(max_length=80)
     tag_id = models.CharField(primary_key=True, unique=(not Register.tag_id), max_length=15)
     course = models.CharField(choices=course_choices, max_length=30)
-    practical_subject = models.CharField(max_length=30)
+    practical_subject = models.CharField(max_length=80)
 
     def __str__(self):
         return self.t_name
 
 
 class LocationTrack(models.Model):
-    area = models.CharField(max_length=40)
+    status = [
+        ('IN', 'IN'),
+        ('OUT', 'OUT')
+    ]
+    area = models.CharField(max_length=40, choices=location_choices)
     tag_id_id = models.CharField(max_length=15)
-    date = models.DateField(auto_now_add=True)
-    time = models.TimeField(auto_now_add=True)
-    status = models.CharField(max_length=3)
+    date = models.DateField(default=timezone.now, editable=True)
+    time = models.TimeField(default=timezone.now, editable=True)
+    status = models.CharField(max_length=3, choices=status)
 
     def __str__(self):
-        return self.area
+        return f'{self.area} {self.tag_id_id} {self.status}'
 
 
 class Timetable(models.Model):
@@ -65,7 +69,7 @@ class Timetable(models.Model):
         ('SY', 'SY'),
         ('TY', 'TY')
     ]
-
+    student = models.ManyToManyField(Register, through='AttendanceRecord', editable=False)
     course = models.CharField(choices=course_choices, max_length=30)
     year = models.CharField(choices=year_list, max_length=12)
     area = models.CharField(max_length=40, choices=location_choices)
@@ -80,23 +84,19 @@ class Timetable(models.Model):
     Sunday = models.CharField(max_length=30)
 
     def __str__(self):
-        return self.course + ' ' + self.year + ' ' + str(self.start_time) + '-' + str(self.end_time)
+        return f'{self.course}  {self.year} {str(self.start_time)} {str(self.end_time)}'
 
 
 class AttendanceRecord(models.Model):
-    course = models.CharField(max_length=30, choices=course_choices)
-    academic_year = models.CharField(max_length=10)
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    attendance_date = models.DateField()
-    attendance_day = models.CharField(max_length=20)
-    attendance_count = models.IntegerField()
-    std_name = models.CharField(max_length=80)
-    std_roll = models.IntegerField()
-    std_div = models.CharField(max_length=5)
-    attendance_batch = models.CharField(max_length=25)
-    attendance_location = models.CharField(max_length=40)
-    tag_id = models.CharField(max_length=15)
+    student = models.ForeignKey(Register, on_delete=models.CASCADE)
+    attendance = models.ForeignKey(Timetable, on_delete=models.CASCADE)
+    area = models.CharField(max_length=40)
+    date = models.DateField()
+    day = models.CharField(max_length=20)
+    batch = models.CharField(max_length=25)
 
     def __str__(self):
-        return str(self.attendance_date) + ' ' + str(self.attendance_batch) + ' ' + str(self.attendance_location)
+        return str(self.date)
+
+
+

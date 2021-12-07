@@ -3,36 +3,7 @@
 
 
 {% block style %}
-.container {
-overflow: hidden;
-max-width : 80%;
-}
-h1 {
-color: rgba(0, 123, 255);
-text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, 0px 1px 0 #000, 1px 1px 0 #000;
-}
-p
-{
-font-family: "Trebuchet MS", Verdana, sans-serif;
-color : white;
-}
-div.myDiv {
-border: 1px outset black;
-background-color: rgba(52, 58, 64);
-text-align: left;
-width : 90%;
-margin: auto;
-margin-top: 1em;
-margin-bottom: 1em;
-box-shadow: rgba(0, 0, 0) 0px 25px 50px;
-}
-.footer img{
-width: 100%;
-}
-.line{
-border-top: 1px dashed white;
-}
-
+<link rel="stylesheet" href="{% static '/static_files/css/how_it_works.css' %}"/>
 {% endblock %}
 
 {% block content %}

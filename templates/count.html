@@ -1,56 +1,8 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 {% block style %}
-.container {
-overflow: hidden;
-max-width : 90%;
-}
-div.myDiv {
-border: 1px outset black;
-background-color: rgba(52, 58, 64);
-text-align: left;
-width : 95%;
-margin: auto;
-margin-top: 1em;
-margin-bottom: 1em;
-box-shadow: rgba(0, 0, 0) 0px 25px 50px;
-}
-.column_simple {
-float: left;
-width: 50%;
-height : auto;
-padding: 10px;
-text-align: left;
-margin: auto;
-padding-bottom: 100%;
-margin-bottom: -100%;
-}
-.name{
-color: white;
-}
-.name_message{
-color: black;
-}
-.line{
-border-top: 1px dashed white;
-}
-td {
-border-right: solid 2px rgba(52, 58, 64);
-border-left: solid 2px rgba(52, 58, 64);
-}
-#shadow_table{
-box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
-}
-.line_solid{
-border-top: 5px solid red;
-}
-.normal_row{
-background-color : rgba(146, 156, 143);
-}
-h4 {
-font-size: 1.1em;
-}
+<link rel="stylesheet" href="{% static '/static_files/css/count.css' %}"/>
 {% endblock %}
 
 
@@ -72,8 +24,7 @@ font-size: 1.1em;
                         <option> Computer Lab 2-b</option>
                         <option> Computer Lab 3-a</option>
                         <option> Computer Lab 3-b</option>
-                        <option> Computer Lab 4-a</option>
-                        <option> Computer Lab 4-b</option>
+                        <option> Computer Lab 4</option>
                         <option> Electronics lab</option>
                         <option> Sports Room</option>
                         <option> Library</option>
@@ -85,22 +36,22 @@ font-size: 1.1em;
                 <h4 class="name">SELECT TIME</h4>
                 <label class="name">START TIME</label>
                 <div class="col">
-                    <input type="text" name="START_TIME" class="form-control" placeholder="Hours"
+                    <input type="number" name="START_TIME" class="form-control" placeholder="Hours"
                            aria-label="Tag id" autocomplete="off">
                 </div>
                 <div class="col">
-                    <input type="text" name="START_MINUTE" class="form-control" placeholder="Minutes"
+                    <input type="number" name="START_MINUTE" class="form-control" placeholder="Minutes"
                            aria-label="Tag id" autocomplete="off">
                 </div>
             </div>
             <div class="row">
                 <label class="name">END TIME</label>
                 <div class="col">
-                    <input type="text" name="LAST_TIME" class="form-control" placeholder="Hours"
+                    <input type="number" name="LAST_TIME" class="form-control" placeholder="Hours"
                            aria-label="Tag id" autocomplete="off">
                 </div>
                 <div class="col">
-                    <input type="text" name="END_MINUTE" class="form-control" placeholder="Minutes"
+                    <input type="number" name="END_MINUTE" class="form-control" placeholder="Minutes"
                            aria-label="Tag id" autocomplete="off">
                 </div>
             </div>
@@ -132,10 +83,23 @@ font-size: 1.1em;
 <div class="container">
     <hr class="line">
     <div class="column_simple">
-        {% if messages %}
-        {% for message in messages %}
-        <h4 class="name_message"><b>{{ message }}</b></h4>
-        {% endfor %}
+        {% if person_list or teacher_list %}
+        {% if message %}
+        <div class="col">
+            <h4 class="name_message"><b>{{ message }}</b></h4>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% if user_date %}
+        {% if not person_list and not teacher_list %}
+        <div class="col">
+            <h4 class="name_message"><b>No records for {{user_date}}</b></h4>
+        </div>
+        {% else %}
+        <div class="col">
+            <h4 class="name_message"><b>Records for {{user_date}}</b></h4>
+        </div>
+        {% endif %}
         {% endif %}
     </div>
     <div class="column_simple">
@@ -149,9 +113,12 @@ font-size: 1.1em;
         {% endif %}
     </div>
 </div>
-<hr class="line">
+
 
 <div class="container">
+    {% if distinct_count %}
+    <hr class="line">
+    {% endif %}
     <div class="column_simple">
         {% if distinct_count %}
         <div class="alert alert-danger">
@@ -187,12 +154,12 @@ font-size: 1.1em;
                 <th scope="row">COURSE</th>
                 <th scope="row">ROLL NUMBER</th>
                 <th scope="row">DIVISION</th>
-                <th scope="row">TIME</th>
-                <th scope="row">STATUS</th>
+                <th scope="row">IN-TIME</th>
+                <th scope="row">OUT-TIME</th>
             </tr>
             </thead>
 
-            {% for srno,tag_id,name,course,roll,div,time, status in person_list %}
+            {% for srno,tag_id,name,course,roll,div,in_time,out_time in person_list %}
             <tbody>
             <tr class="normal_row">
                 <td scope="row"><b>{{srno}}</b></td>
@@ -201,8 +168,8 @@ font-size: 1.1em;
                 <td scope="row"><b>{{course}}</b></td>
                 <td scope="row"><b>{{roll}}</b></td>
                 <td scope="row"><b>{{div}}</b></td>
-                <td scope="row"><b>{{time}}</b></td>
-                <td scope="row"><b>{{status}}</b></td>
+                <td scope="row"><b>{{in_time}}</b></td>
+                <td scope="row"><b>{{out_time}}</b></td>
             </tr>
             </tbody>
             {% endfor %}
@@ -225,12 +192,12 @@ font-size: 1.1em;
                 <th scope="row">NAMES</th>
                 <th scope="row">COURSE</th>
                 <th scope="row">PRACTICAL SUBJECT</th>
-                <th scope="row">TIME</th>
-                <th scope="row">STATUS</th>
+                <th scope="row">IN_TIME</th>
+                <th scope="row">OUT_TIME</th>
             </tr>
             </thead>
 
-            {% for srno, tag, name, course, practical_subject, time, status in teacher_list %}
+            {% for srno, tag, name, course, practical_subject,in_time,out_time in teacher_list %}
             <tbody>
             <tr class="normal_row">
                 <td scope="row"><b>{{srno}}</b></td>
@@ -238,8 +205,8 @@ font-size: 1.1em;
                 <td scope="row"><b>{{name}}</b></td>
                 <td scope="row"><b>{{course}}</b></td>
                 <td scope="row"><b>{{practical_subject}}</b></td>
-                <td scope="row"><b>{{time}}</b></td>
-                <td scope="row"><b>{{status}}</b></td>
+                <td scope="row"><b>{{in_time}}</b></td>
+                <td scope="row"><b>{{out_time}}</b></td>
             </tr>
             </tbody>
             {% endfor %}
@@ -248,14 +215,7 @@ font-size: 1.1em;
     </div>
 </div>
 
-{% if not person_list and not teacher_list and user_date %}
-<div class="container">
-    <h3 class="name_message">
-        NO RECORDS FOR {{user_date}}
-    </h3>
-</div>
 
-{% endif %}
 <br><br>
 
 {% else %}

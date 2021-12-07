@@ -30,11 +30,11 @@
                 <p><a class="btn btn-primary" href="{% url 'page:register' %}" role="button">REGISTER</a></p>
             </div>
             <div class="col-md-4">
-                <h2>TRACE A PERSON</h2>
-                <p>The RFID attendance system can trace a person based on his/her tag(id card),
-                    Track records can be seen here.
-                    Incomplete attendance/Irregularities in attendance; can also be seen here</p>
-                <p><a class="btn btn-primary" href="{% url 'page:trace' %}" role="button">TRACE</a></p>
+                <h2>SAVE ATTENDANCE</h2>
+                <p>Set the attendances of students for their batches, The teacher may select the batch(if multiple
+                    batches for same day) and tick the checkboxes for student for saving the attendance.Teacher can
+                    delete the attendance as well, by unchecking the checkbox.</p>
+                <p><a class="btn btn-primary" href="{% url 'page:save_attendance' %}" role="button">SAVE ATTENDANCE</a></p>
             </div>
         </div>
     </div>
@@ -42,9 +42,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
+                <h2>TRACE A PERSON</h2>
+                <p>The RFID attendance system can trace a person based on his/her tag(id card),
+                    Track records can be seen here.
+                    Incomplete attendance/Irregularities in attendance; can also be seen here</p>
+                <p><a class="btn btn-primary" href="{% url 'page:trace' %}" role="button">TRACE</a></p>
+            </div>
+            <div class="col-md-4">
                 <h2>TIME-TABLE COUNT</h2>
                 <p>The RFID attendance system counts the students attendance in any Lab for particular time.
-                    Here we can get the timetable wise count for any course.</p>
+                    Here we can get the timetable wise count for any course and academic year.</p>
                 <p><a class="btn btn-primary" href="{% url 'page:timetable_wise_count' %}" role="button">TIMETABLE
                     COUNT</a></p>
             </div>

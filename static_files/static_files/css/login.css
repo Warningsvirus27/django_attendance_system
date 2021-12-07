@@ -1,0 +1,41 @@
+body{
+              background-color: rgba(25, 55, 18, .3);
+              background-portion:center;
+              background-size:cover;
+              font-family:sans-serif;
+              margin-top:40px;
+           }
+        .container {
+overflow: hidden;
+max-width : 95%;
+}
+div.label
+{
+   margin: 0;
+   width: 70%;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+bottom: 0px;
+margin: auto;
+margin-top: 1em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+h4 {
+  font-size: 1.1em;
+  color: white;
+}
+.message{
+  color: white;
+}
+.line{
+border-top: 1px dashed white;
+}

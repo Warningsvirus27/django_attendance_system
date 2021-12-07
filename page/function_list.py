@@ -87,9 +87,10 @@ def return_count_value(timetable, date):
             for person in total_students:
                 if person:
                     cursor = connection.cursor()
-                    cursor.execute(f"""select name, div, roll from page_register, page_locationtrack where 
+                    cursor.execute(f"""select name, div, roll from page_register where 
                                                                 page_register.tag_id = '{person[0]}';""")
                     stud_det = cursor.fetchone()
+
                     student_detail_list.append([stud_det[0], stud_det[1], stud_det[2]])
                     temp += 1
 
@@ -203,16 +204,19 @@ def count_for_entire_day(place_to_find_count, user_date, start_minute, end_minut
     teacher_data_list = []
     cursor = connection.cursor()
     cursor.execute(f"""select page_register.tag_id,page_register.name,page_register.course,page_register.roll,page_register.div,
-    page_locationtrack.time,page_locationtrack.status from page_register, page_locationtrack where
+    page_locationtrack.time from page_register, page_locationtrack where
                         page_register.tag_id = page_locationtrack.tag_id_id and area='{place_to_find_count}'
-                        and page_locationtrack.date = '{user_date}' order by page_locationtrack.time;""")
+                        and page_locationtrack.date = '{user_date}' and page_locationtrack.status = 'IN'
+                        order by page_locationtrack.time;""")
+
     stud_data = cursor.fetchall()
     cursor.execute(f"""select page_teacherregister.tag_id,page_teacherregister.t_name,page_teacherregister.course,
-    page_teacherregister.practical_subject,page_locationtrack.time,page_locationtrack.status from
+    page_teacherregister.practical_subject,page_locationtrack.time from
                     page_teacherregister, page_locationtrack where
-                                    page_teacherregister.tag_id = page_locationtrack.tag_id_id and
-                                    area='{place_to_find_count}'
-                                    and page_locationtrack.date = '{user_date}' order by page_locationtrack.time;""")
+                    page_teacherregister.tag_id = page_locationtrack.tag_id_id  and page_locationtrack.status = 'IN' and
+                    page_locationtrack.area='{place_to_find_count}' and page_locationtrack.date = '{user_date}'
+                    order by page_locationtrack.time;""")
+    #  and page_locationtrack.status = 'IN'
     teacher_data = cursor.fetchall()
     cursor = connection.cursor()
     cursor.execute(f"""select count(distinct(tag_id_id)) from page_locationtrack where
@@ -220,14 +224,83 @@ def count_for_entire_day(place_to_find_count, user_date, start_minute, end_minut
     distinct_count = cursor.fetchall()
     cursor = connection.cursor()
     cursor.execute(f"""select count(tag_id_id) from page_locationtrack where
-                                           area='{place_to_find_count}' and date='{user_date}';""")
+                    area='{place_to_find_count}' and date='{user_date}' and status = 'IN';""")
     total_count = cursor.fetchall()
 
-    for srno, (tag, name, course, roll, div, time, status) in enumerate(stud_data, 1):
-        data_list.append([srno, tag, name, course, roll, div, time, status])
-    for srno, (tag, name, course, practical_subject, time, status) in enumerate(teacher_data, 1):
-        teacher_data_list.append([srno, tag, name, course, practical_subject, time, status])
+    for srno, (tag, name, course, roll, div, time) in enumerate(stud_data, 1):
+        data_list.append([srno, tag, name, course, roll, div, time])
+    for srno, (tag, name, course, practical_subject, time) in enumerate(teacher_data, 1):
+        teacher_data_list.append([srno, tag, name, course, practical_subject, time])
+    # ---------------------------------------------------------- for getting the out status time for student
+    status_out_list = []
+    for records in data_list:
+        srno, tag, name, course, roll, div, time = records
 
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                                and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}' and 
+                            page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}'
+                            order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            data_list[index].append(status_time)
+
+    # ------------------------------------------------------for getting the teacher out status
+    status_out_list = []
+    for records in teacher_data_list:
+        srno, tag, name, course, practical_subject, time = records
+
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                        and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                        page_locationtrack.time >= '{time}' and 
+                        page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                                page_locationtrack.time >= '{time}'
+                                order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            teacher_data_list[index].append(status_time)
+    # ---------------------------------------------------------------------
     if start_minute and not end_minute:
         messages = '''Start Minute will not count! Showing count for entire day'''
         content = {"person_list": data_list,
@@ -246,7 +319,6 @@ def count_for_entire_day(place_to_find_count, user_date, start_minute, end_minut
                    "teacher_list": teacher_data_list,
                    "distinct_count": distinct_count[0][0],
                    'total_count': total_count[0][0]}
-
     else:
         messages = "Showing count for entire day!"
         content = {"person_list": data_list,
@@ -264,24 +336,96 @@ def count_with_starting_time(start_minute, start_time, place_to_find_count, user
     if not start_minute:
         start_minute = '00'
     cursor = connection.cursor()
-    cursor.execute(f"""select page_register.tag_id,page_register.name,page_register.course,page_register.roll,page_register.div,
-    page_locationtrack.time,page_locationtrack.status from page_register, page_locationtrack where
+    cursor.execute(f"""select page_register.tag_id,page_register.name,page_register.course,page_register.roll,
+    page_register.div,page_locationtrack.time from page_register, page_locationtrack where
                         page_register.tag_id = page_locationtrack.tag_id_id and area='{place_to_find_count}'
                     and page_locationtrack.time>='{start_time}:{start_minute}:00'
-                    and page_locationtrack.date = '{user_date}' order by page_locationtrack.time;""")
+                    and page_locationtrack.date = '{user_date}' and page_locationtrack.status = 'IN' 
+                    order by page_locationtrack.time;""")
     data = cursor.fetchall()
-    cursor.execute(f"""select page_teacherregister.tag_id,page_teacherregister.t_name,page_teacherregister.course,page_teacherregister.practical_subject,
-    page_locationtrack.time,page_locationtrack.status from
-                        page_teacherregister, page_locationtrack where
-                                    page_teacherregister.tag_id = page_locationtrack.tag_id_id and
-                                    area='{place_to_find_count}'
-                                    and page_locationtrack.date = '{user_date}' order by page_locationtrack.time;""")
+    cursor.execute(f"""select page_teacherregister.tag_id,page_teacherregister.t_name,
+    page_teacherregister.course,page_teacherregister.practical_subject,
+    page_locationtrack.time from page_teacherregister, page_locationtrack where
+    page_teacherregister.tag_id = page_locationtrack.tag_id_id and 
+    page_locationtrack.time>='{start_time}:{start_minute}:00' and 
+    area='{place_to_find_count}' and page_locationtrack.status = 'IN'
+    and page_locationtrack.date = '{user_date}' order by page_locationtrack.time;""")
     teacher_data = cursor.fetchall()
-    for srno, (tag, name, course, practical_subject, time, status) in enumerate(teacher_data, 1):
-        teacher_data_list.append([srno, tag, name, course, practical_subject, time, status])
-    for srno, (tag, name, course, roll, div, time, status) in enumerate(data, 1):
-        data_list.append([srno, tag, name, course, roll, div, time, status])
+    for srno, (tag, name, course, practical_subject, time) in enumerate(teacher_data, 1):
+        teacher_data_list.append([srno, tag, name, course, practical_subject, time])
+    for srno, (tag, name, course, roll, div, time) in enumerate(data, 1):
+        data_list.append([srno, tag, name, course, roll, div, time])
 
+    # ---------------------------------------------------------- for getting the out status time for student
+    status_out_list = []
+    for records in data_list:
+        srno, tag, name, course, roll, div, time = records
+
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                                and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}' and 
+                            page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}'
+                            order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            data_list[index].append(status_time)
+
+    # ------------------------------------------------------for getting the teacher out status
+    status_out_list = []
+    for records in teacher_data_list:
+        srno, tag, name, course, practical_subject, time = records
+
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                        and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                        page_locationtrack.time >= '{time}' and 
+                        page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                                page_locationtrack.time >= '{time}'
+                                order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            teacher_data_list[index].append(status_time)
+    # ---------------------------------------------------------------------
     cursor = connection.cursor()
     cursor.execute(f"""select count(distinct(tag_id_id)) from page_locationtrack where
                                area='{place_to_find_count}' and date='{user_date}'
@@ -289,7 +433,7 @@ def count_with_starting_time(start_minute, start_time, place_to_find_count, user
     distinct_count = cursor.fetchall()
     cursor = connection.cursor()
     cursor.execute(f"""select count(tag_id_id) from page_locationtrack where
-                                           area='{place_to_find_count}' and date='{user_date}'
+                    area='{place_to_find_count}' and date='{user_date}' and status = 'IN'
                                         and time>='{start_time}:{start_minute}:00';""")
     total_count = cursor.fetchall()
     message = f"Showing student count from time {start_time}:{start_minute}:00 onwards"
@@ -307,31 +451,102 @@ def count_with_ending_time(end_minute, end_time, place_to_find_count, user_date)
     if not end_minute:
         end_minute = '00'
     cursor = connection.cursor()
-    cursor.execute(f"""select page_register.tag_id, page_register.name, page_register.course, page_register.roll, page_register.div,
-    page_locationtrack.time, page_locationtrack.status from page_register, page_locationtrack where
+    cursor.execute(f"""select page_register.tag_id, page_register.name, page_register.course, page_register.roll, 
+    page_register.div,page_locationtrack.time from page_register, page_locationtrack where
                         page_register.tag_id = page_locationtrack.tag_id_id and area='{place_to_find_count}'
-                    and page_locationtrack.time<='{end_time}:{end_minute}:00'
+                    and page_locationtrack.time<='{end_time}:{end_minute}:00' and page_locationtrack.status = 'IN'
                     and page_locationtrack.date = '{user_date}' order by page_locationtrack.time;""")
     data = cursor.fetchall()
-    cursor.execute(f"""select page_teacherregister.tag_id,page_teacherregister.t_name,page_teacherregister.course,page_teacherregister.practical_subject,
-    page_locationtrack.time,page_locationtrack.status from
-                            page_teacherregister, page_locationtrack where
-                                        page_teacherregister.tag_id = page_locationtrack.tag_id_id and
-                                        area='{place_to_find_count}'
-                                        and page_locationtrack.date = '{user_date}'
-                                        order by page_locationtrack.time;""")
+    cursor.execute(f"""select page_teacherregister.tag_id,page_teacherregister.t_name,page_teacherregister.course,
+    page_teacherregister.practical_subject,page_locationtrack.time from
+    page_teacherregister, page_locationtrack where
+    page_teacherregister.tag_id = page_locationtrack.tag_id_id and
+    area='{place_to_find_count}' and page_locationtrack.date = '{user_date}'
+    and page_locationtrack.time<='{end_time}:{end_minute}:00' and page_locationtrack.status = 'IN' 
+    order by page_locationtrack.time;""")
     teacher_data = cursor.fetchall()
-    for srno, (tag, name, course, practical_subject, time, status) in enumerate(teacher_data, 1):
-        teacher_data_list.append([srno, tag, name, course, practical_subject, time, status])
-    for srno, (tag, name, course, roll, div, time, status) in enumerate(data, 1):
-        data_list.append([srno, tag, name, course, roll, div, time, status])
+    for srno, (tag, name, course, practical_subject, time) in enumerate(teacher_data, 1):
+        teacher_data_list.append([srno, tag, name, course, practical_subject, time])
+    for srno, (tag, name, course, roll, div, time) in enumerate(data, 1):
+        data_list.append([srno, tag, name, course, roll, div, time])
+
+    # ---------------------------------------------------------- for getting the out status time for student
+    status_out_list = []
+    for records in data_list:
+        srno, tag, name, course, roll, div, time = records
+
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                                and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}' and 
+                            page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}'
+                            order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            data_list[index].append(status_time)
+
+    # ------------------------------------------------------for getting the teacher out status
+    status_out_list = []
+    for records in teacher_data_list:
+        srno, tag, name, course, practical_subject, time = records
+
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                        and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                        page_locationtrack.time >= '{time}' and 
+                        page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                                page_locationtrack.time >= '{time}'
+                                order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            teacher_data_list[index].append(status_time)
+    # ---------------------------------------------------------------------
 
     cursor.execute(f"""select count(distinct(tag_id_id)) from page_locationtrack where
                                            area='{place_to_find_count}' and date='{user_date}'
                                         and time<='{end_time}:{end_minute}:00';""")
     distinct_count = cursor.fetchall()
     cursor.execute(f"""select count(tag_id_id) from page_locationtrack where
-                                                       area='{place_to_find_count}' and date='{user_date}'
+                    area='{place_to_find_count}' and date='{user_date}' and status = 'IN' 
                                                     and time<='{end_time}:{end_minute}:00';""")
     total_count = cursor.fetchall()
     message = f"Showing student count before time {end_time}:{end_minute}:00"
@@ -354,26 +569,99 @@ def count_with_start_end_time(start_minute, end_minute, start_time, end_time, pl
     if start_minute and not end_minute:
         end_minute = '00'
     cursor = connection.cursor()
-    cursor.execute(f"""select page_register.tag_id, page_register.name, page_register.course,page_register.roll, page_register.div,
-    page_locationtrack.time, page_locationtrack.status from page_register, page_locationtrack where
+    cursor.execute(f"""select page_register.tag_id, page_register.name, page_register.course,page_register.roll, 
+    page_register.div,page_locationtrack.time from page_register, page_locationtrack where
                 page_register.tag_id = page_locationtrack.tag_id_id and area='{place_to_find_count}'
                 and page_locationtrack.time>='{start_time}:{start_minute}:00'
-                and page_locationtrack.time<='{end_time}:{end_minute}:00'
+                and page_locationtrack.time<='{end_time}:{end_minute}:00' and page_locationtrack.status = 'IN'
                 and page_locationtrack.date = '{user_date}' order by page_locationtrack.time;""")
     data = cursor.fetchall()
-    cursor.execute(f"""select page_teacherregister.tag_id,page_teacherregister.t_name,page_teacherregister.course,page_teacherregister.practical_subject,
-    page_locationtrack.time,page_locationtrack.status from
-                            page_teacherregister, page_locationtrack where
-                                        page_teacherregister.tag_id = page_locationtrack.tag_id_id and
-                                        area='{place_to_find_count}'
-                                        and page_locationtrack.date = '{user_date}'
-                                        order by page_locationtrack.time;""")
+    cursor.execute(f"""select page_teacherregister.tag_id,page_teacherregister.t_name,page_teacherregister.course,
+    page_teacherregister.practical_subject,page_locationtrack.time from
+    page_teacherregister, page_locationtrack where
+    page_teacherregister.tag_id = page_locationtrack.tag_id_id 
+    and page_locationtrack.time>='{start_time}:{start_minute}:00'
+                and page_locationtrack.time<='{end_time}:{end_minute}:00' and 
+    area='{place_to_find_count}' and page_locationtrack.status = 'IN'
+    and page_locationtrack.date = '{user_date}'
+    order by page_locationtrack.time;""")
     teacher_data = cursor.fetchall()
-    for srno, (tag, name, course, practical_subject, time, status) in enumerate(teacher_data, 1):
-        teacher_data_list.append([srno, tag, name, course, practical_subject, time, status])
+    for srno, (tag, name, course, practical_subject, time) in enumerate(teacher_data, 1):
+        teacher_data_list.append([srno, tag, name, course, practical_subject, time])
 
-    for srno, (tag, name, course, roll, div, time, status) in enumerate(data, 1):
-        data_list.append([srno, tag, name, course, roll, div, time, status])
+    for srno, (tag, name, course, roll, div, time) in enumerate(data, 1):
+        data_list.append([srno, tag, name, course, roll, div, time])
+
+    # ---------------------------------------------------------- for getting the out status time for student
+    status_out_list = []
+    for records in data_list:
+        srno, tag, name, course, roll, div, time = records
+
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                                and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}' and 
+                            page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                            page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                            page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                            page_locationtrack.time >= '{time}'
+                            order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            data_list[index].append(status_time)
+
+    # ------------------------------------------------------for getting the teacher out status
+    status_out_list = []
+    for records in teacher_data_list:
+        srno, tag, name, course, practical_subject, time = records
+
+        cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'IN' 
+                        and page_locationtrack.time > '{time}';''')
+        next_in_for_same_tag = cursor.fetchone()
+
+        if next_in_for_same_tag:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                        page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                        page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                        page_locationtrack.time >= '{time}' and 
+                        page_locationtrack.time < '{next_in_for_same_tag[0]}' order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+        else:
+            cursor.execute(f'''select page_locationtrack.time from page_locationtrack where
+                                page_locationtrack.tag_id_id = '{tag}' and page_locationtrack.date = '{user_date}' and 
+                                page_locationtrack.area = '{place_to_find_count}' and page_locationtrack.status = 'OUT' and
+                                page_locationtrack.time >= '{time}'
+                                order by page_locationtrack.time;''')
+            out_list = cursor.fetchall()
+
+        if out_list:
+            status_out_list.append(out_list[0][0])
+        else:
+            status_out_list.append('-')
+    if any(status_out_list):
+        for index, records in enumerate(status_out_list):
+            status_time = records
+            teacher_data_list[index].append(status_time)
+    # ---------------------------------------------------------------------
 
     cursor.execute(f"""select count(distinct(tag_id_id)) from page_locationtrack where
                     area='{place_to_find_count}' and date='{user_date}'
@@ -381,7 +669,7 @@ def count_with_start_end_time(start_minute, end_minute, start_time, end_time, pl
                     and time<='{end_time}:{end_minute}:00';""")
     distinct_count = cursor.fetchall()
     cursor.execute(f"""select count(tag_id_id) from page_locationtrack where
-                                area='{place_to_find_count}' and date='{user_date}'
+                                area='{place_to_find_count}' and date='{user_date}' and status = 'IN' 
                                 and time>='{start_time}:{start_minute}:00'
                                 and time<='{end_time}:{end_minute}:00';""")
     total_count = cursor.fetchall()
@@ -393,43 +681,27 @@ def count_with_start_end_time(start_minute, end_minute, start_time, end_time, pl
     return content
 
 
-def input_excel_data(row_num, font_style, ws, content, iterator):
+# def input_excel_data(row_num, font_style, ws, content, iterator):
+def input_excel_data(row_num, font_style, ws, table, cols):
     row_num += 3
     font_style.font.bold = True
 
-    for x in range(1, iterator):
-        ws.write(row_num, 0, content[f'head{x}'], font_style)
-        font_style.font.bold = False
+    for sr_no, col_name in enumerate(cols):
+        ws.write(row_num, sr_no, col_name, font_style)
+    row_num += 1
+    for record in table:
+        tag, div, roll, name, course, year, area, batch = record
+        ws.write(row_num, 0, tag, font_style)
+        ws.write(row_num, 1, div, font_style)
+        ws.write(row_num, 2, roll, font_style)
+        ws.write(row_num, 3, name, font_style)
+        ws.write(row_num, 4, course, font_style)
+        ws.write(row_num, 5, year, font_style)
+        ws.write(row_num, 6, area, font_style)
+        ws.write(row_num, 7, batch, font_style)
         row_num += 1
-        ws.write(row_num, 0, 'Batches', font_style)
-        for col, info in enumerate(content[f'table{x}'], 2):
-            ws.write(row_num, col, info, font_style)
-        row_num += 1
-
-        ws.write(row_num, 0, 'Location', font_style)
-        for col, info in enumerate(content[f'area{x}'], 2):
-            ws.write(row_num, col, info, font_style)
-        row_num += 1
-        ws.write(row_num, 0, 'Batches Time', font_style)
-        for col, info in enumerate(content[f'batch_time{x}'], 2):
-            ws.write(row_num, col, info, font_style)
-        row_num += 1
-
-        ws.write(row_num, 0, 'Distinct Count', font_style)
-        for col, info in enumerate(content[f'dist_count{x}'], 2):
-            ws.write(row_num, col, str(info[0]), font_style)
-
-        row_num += 1
-        ws.write(row_num, 0, 'Attendence List', font_style)
-        for single_line in content[f'person_list{x}']:
-            for sr_no, info in enumerate(single_line, 2):
-                if not any(info):
-                    ws.write(row_num, sr_no, '-', font_style)
-                else:
-                    ws.write(row_num, sr_no, f'{info[0][0]} {info[0][1]}-{info[0][2]}', font_style)
-            row_num += 1
-        row_num += 3
-    return ws
+    row_num += 3
+    return ws, row_num
 
 
 def excel_maker_data_entry(row_num, font_style, ws, area, table):

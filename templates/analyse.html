@@ -1,49 +1,116 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 {% block style %}
+<link rel="stylesheet" href="{% static 'static_files/css/analyse.css' %}"/>
 {% endblock %}
 
 
 {% block content %}
-<canvas id="myChart" width="500" height="500"></canvas>
-{% block script %}
+<div class="myDiv">
+    <div class="container">
+        <form method="get">
+            <br>
+            {% if is_course %}
+                <input type="hidden" name="course" value="{{is_course}}">
+            {% endif %}
+            {% if is_year %}
+                <input type="hidden" name="year" value="{{is_year}}">
+            {% endif %}
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Start date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE1">
+                        <option disabled="disabled" selected="selected">--Today's date is default</option>
+                        {% for x in date_list %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <h4 class="name">End date</h4>
+                    <select class="form-select" aria-label="Default select example" name="DATE2">
+                        <option disabled="disabled" selected="selected">--Today's date is default</option>
+                        {% for x in date_list %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            {% if is_course and is_year %}
+            <div class="row">
+                <div class="col">
+                    <input type="number" name="std_roll" class="form-control" placeholder="Student Roll"
+                           aria-label="First name" autocomplete="off">
+                </div>
+            </div>
+            {% endif %}
+            <br>
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </form>
+    </div>
+</div>
+<hr class="line">
 
-<script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: [{% for x in course.0 %}'{{x.0}}',{% endfor %}],
-        datasets: [{
-            label: '# of Votes',
-            data: [{% for y in course.1 %}{{y}},{% endfor %}],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});</script>
+{% if messages %}
+<div class="alert alert-danger" role="alert">
+    {% for message in messages %}
+    <h4><b>{{ message }}</b></h4>
+</div>
+{% endfor %}
+<hr class="line">
+{% endif %}
+
+{% if main_graph %}
+<div class="row">
+    <div class="col">
+        <div class="text-center">
+            <h4>Year Wise Attendance Count for all Courses</h4>
+            {% if start_date and end_date %}
+            <h4>from {{start_date}} to {{end_date}}</h4>
+            {% endif %}
+            <div class="table_width_control" id="shadow_table">
+                <img src="data:image/png;base64, {{main_graph | safe}}">
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="line">
+
+{% endif %}
+
+<div class="container">
+    {% for course, graph in compare_graph.items %}
+    <div class="row">
+        <div class="alert alert-danger" role="alert">
+            {% if is_course %}
+            <a href="{% url 'page:analyse_attendance' %}?course={{is_course}}&year={{course}}">
+                <h4><b>{{course}}</b></h4>
+            </a>
+            {% else %}
+            <a href="{% url 'page:analyse_attendance' %}?course={{course}}">
+                <h4><b>{{course}}</b></h4>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="text-center">
+            <div class="table_width_control" id="shadow_table">
+                <img src="data:image/png;base64, {{graph | safe}}">
+            </div>
+        </div>
+    </div>
+    <hr class="line">
+    {% endfor %}
+</div>
+
 {% endblock %}
-{% endblock %}
+

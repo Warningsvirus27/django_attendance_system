@@ -13,8 +13,9 @@ urlpatterns = [
     path('entry/', views.entry_data, name='entry'),
     path('timetable_wise-count/', views.timetable_wise_count, name='timetable_wise_count'),
     path('time_wise-count/', views.time_wise_count, name='time_wise_count'),
-    path('weekly_data/', views.weekly_data, name='weekly_data'),
-    path('monthly_data/', views.monthly_data, name='monthly_data'),
+    # path('weekly_data/', views.weekly_data, name='weekly_data'),
+    # path('monthly_data/', views.monthly_data, name='monthly_data'),
+    path('attendance/', views.attendance_data, name='attendance_data'),
     path('view_timetable/', views.view_timetable, name='view_timetable'),
     path('analyse_attendance/', views.analyse_attendance, name='analyse_attendance'),
 
@@ -27,10 +28,11 @@ urlpatterns = [
     path('what_is_rfid/', views.what_is_rfid, name='what_is_rfid'),
     path('why_rfid/', views.why_rfid, name='why_rfid'),
     path('how_it_works/', views.how_it_works, name='how_it_works'),
-    path('weekly-monthly_excel_pdf/<str:method>/', views.weekly_monthly_excel_pdf, name='weekly-monthly_excel_pdf'),
-    path('weekly-monthly_excel_pdf/', views.weekly_monthly_excel_pdf, name='weekly-monthly_excel_pdf'),
+    path('save_attendance/', views.save_attendance, name='save_attendance'),
+    path('attendance_excel_pdf/', views.attendance_excel_pdf, name='attendance_excel_pdf'),
+    path('attendance_excel_pdf/<str:method>/', views.attendance_excel_pdf, name='attendance_excel_pdf'),
 
     path('entry_/', views.TagApiView.as_view(), name='entry_'),
-    path('entry_/<str:tag_>/<str:area_>/', views.TagApiView.as_view(), name='entry_')
+    # path('entry_/<str:tag_>/<str:area_>/', views.TagApiView.as_view(), name='entry_')
 
 ]

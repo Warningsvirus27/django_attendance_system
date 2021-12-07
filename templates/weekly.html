@@ -1,60 +1,8 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block style %}
-* {
-box-sizing: border-box;
-}
-.container {
-overflow: hidden;
-max-width : 95%;
-}
-div.myDiv {
-border: 1px outset black;
-background-color: rgba(52, 58, 64);
-text-align: left;
-width : 90%;
-margin: auto;
-margin-top: 1em;
-margin-bottom: 1em;
-box-shadow: rgba(0, 0, 0) 0px 25px 50px;
-}
-.column_simple {
-float: left;
-width: 50%;
-height : auto;
-padding: 10px;
-text-align: left;
-margin: auto;
-padding-bottom: 100%;
-margin-bottom: -100%;
-}
-h4 {
-font-size: 1.1em;
-color: white;
-}
-.line{
-border-top: 1px dashed white;
-}
-.line_solid{
-border-top: 5px solid red;
-}
-.row_color
-{
-background-color: rgba(47, 142, 245);
-}
-.normal_row{
-background-color : rgba(146, 156, 143);
-}
-td {
-border-right: solid 2px rgba(52, 58, 64);
-border-left: solid 2px rgba(52, 58, 64);
-}
-#shadow_table{
-box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
-}
-.name_message{
-color: black;
-}
+<link rel="stylesheet" href="{% static '/static_files/css/weekly.css' %}"/>
 {% endblock %}
 
 
@@ -66,8 +14,17 @@ color: black;
             <br>
             <div class="row">
                 <div class="col">
-                    <h4 class="name">Any specific date</h4>
-                    <select class="form-select" aria-label="Default select example" name="DATE">
+                    <h4 class="name">Start date</h4>
+                    <select class="form-select" aria-label="Default select example" name="START_DATE">
+                        <option disabled="disabled" selected="selected">--Today's date is default</option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <h4 class="name">End date</h4>
+                    <select class="form-select" aria-label="Default select example" name="END_DATE">
                         <option disabled="disabled" selected="selected">--Today's date is default</option>
                         {% for x in date %}
                         <option> {{x}}</option>
@@ -114,10 +71,10 @@ color: black;
     </div>
     <div class="column_simple">
         {% if courses %}
-        <a href="{% url 'page:weekly-monthly_excel_pdf' %}1/?date={{today}}&end_date={{last_date}}">
+        <a href="{% url 'page:attendance_excel_pdf' %}1/?date={{today}}&end_date={{last_date}}">
             <button type="submit" class="btn btn-danger">Get Excel</button>
         </a>
-        <a href="{% url 'page:weekly-monthly_excel_pdf' %}2/?date={{today}}&end_date={{last_date}}">
+        <a href="{% url 'page:attendance_excel_pdf' %}2/?date={{today}}&end_date={{last_date}}">
             <button type="submit" class="btn btn-danger">Get Pdf</button>
         </a>
         {% endif %}
@@ -136,45 +93,7 @@ color: black;
     <br>
 
     <div class="table_width_control" id="shadow_table">
-        <table class="table" align="center">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">{{course}}</th>
-            </tr>
-            </thead>
-
-            {% for batches,records in data.items %}
-            <tbody>
-            <tr class="row_color">
-                <th scope="row"><b>{{batches}}</b></th>
-                {% for head in table_head %}
-                <th scope="row"><b>{{head}}</b></th>
-                {% endfor %}
-            </tr>
-            </tbody>
-
-            <tbody>
-
-            {% for std in records %}
-            {% if not std %}
-            <tr class="normal_row">
-                <td scope="row"><b>No Recrods</b></td>
-            </tr>
-            {% else %}
-            <tr class="normal_row">
-                {% for data in std %}
-                <td scope="row"><b></b></td>
-                {% for m in data %}
-                <td scope="row"><b>{{m}}</b></td>
-                {% endfor %}
-
-            </tr>
-            {% endfor %}
-            {% endif %}
-            {% endfor %}
-            </tbody>
-            {% endfor %}
-        </table>
+        {{ data | safe}}
     </div>
     <br>
     {% endfor %}

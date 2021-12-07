@@ -7,18 +7,13 @@ table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
   width: 100%;
+  margin: 10px;
 }
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
+td {
+text-align: center;
+border-right: solid 2px rgba(52, 58, 64);
+border-left: solid 1px rgba(52, 58, 64);
 }
-
-tr:nth-child(even) {
-  background-color: #dddddd;
-}
-
 
 
     </style>
@@ -26,61 +21,34 @@ tr:nth-child(even) {
 
 <body>
 <br><br>
+<div class="container">
+    <div class="column_simple">
+        {% if courses %}
+        <div class="alert alert-danger" role="alert">
+            <h4 class="name_message"><b>RECORDS FROM : {{today}} - {{last_date}}</b></h4>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<br>
+
 
 {% if courses %}
-<div>
-    <h4>RECORDS FROM : {{today}} - {{last_date}}</h4>
+<div class="container">
+    {% for course,data in courses.items %}
+    <hr class="line_solid">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="name_message"><b>COURSE : {{course}}</b></h4>
+    </div>
+    <br>
+        {{ data | safe}}
+    <br>
+    {% endfor %}
 </div>
-
-{% for course,data in courses.items %}
-
-<div class="alert-alert-danger" role="alert">
-    <h4>COURSE : {{course}}</h4>
+{% elif not today %}
+<div class="container">
+    <h4 class="name_message">No Records</h4>
 </div>
-
-
-<table class="table" align="center">
-    <thead class="thead-dark">
-    <tr>
-        <th scope="col" bgcolor="blue">{{course}}</th>
-    </tr>
-    </thead>
-
-    {% for batches,records in data.items %}
-    <tbody>
-    <tr>
-        <th scope="row"><b>{{batches}}</b></th>
-        {% for head in table_head %}
-        <th scope="row"><b>{{head}}</b></th>
-        {% endfor %}
-    </tr>
-    </tbody>
-
-    <tbody>
-    {% for std in records %}
-    {% if not std %}
-    <tr class="normal_row">
-        <td scope="row"><b>No Recrods</b></td>
-    </tr>
-    {% else %}
-
-    <tr>
-        {% for data in std %}
-        <th scope="row"><b></b></th>
-        {% for m in data %}
-        <th scope="row"><b>{{m}}</b></th>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    {% endif %}
-    {% endfor %}
-    </tbody>
-
-
-    {% endfor %}
-</table>
-<br>
-{% endfor %}
 {% endif %}
 </body>
 </html>

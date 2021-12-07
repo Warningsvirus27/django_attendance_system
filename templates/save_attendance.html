@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static '/static_files/css/save_attendance.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">OOPS!!!!!</h5>
+                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                   <span aria-hidden="true">&times;</span>
+                 </button>-->
+            </div>
+            <div class="modal-body">
+                Please Select The Batch,To Submit.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="alert alert-secondary">
+                <div class="text-center">
+                    {% for message in messages %}
+                    <h4 class="name_color"><b>{{message}}</b></h4>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="myDiv">
+    <div class="container">
+        <br>
+        <form method="get">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">Select Course</h4>
+                    <select id="sel1" class="form-select" aria-label="Default select example" name="course"
+                            onchange="depend(this.id,'sel2')">
+                        <option disabled="disabled" selected="selected">--Choose Your Course</option>
+                        {% for course, id in year_id.items %}
+                        <option id="{{id | safe}}">{{course}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <h4 class="name">Select Year</h4>
+                    <select id="sel2" class="form-select" aria-label="Default select example" name="year">
+                    </select>
+                </div>
+            </div>
+            <hr class="line">
+            <div class="row">
+                <div class="col">
+                    <h4 class="name">PLACE</h4>
+                    <select class="form-select" aria-label="Default select example" name="area">
+                        <option disabled="disabled" selected="selected">--Choose Place</option>
+                        <option> Computer Lab 1-a</option>
+                        <option> Computer Lab 1-b</option>
+                        <option> Computer Lab 2-a</option>
+                        <option> Computer Lab 2-b</option>
+                        <option> Computer Lab 3-a</option>
+                        <option> Computer Lab 3-b</option>
+                        <option> Computer Lab 4</option>
+                        <option> Computer Lab 4-b</option>
+                        <option> Electronics lab</option>
+                        <option> Sports Room</option>
+                        <option> Library</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <h4 class="name">Any specific date</h4>
+                    <select class="form-select" aria-label="Default select example" name="date">
+                        <option disabled="disabled" selected="selected">--Today's date is default</option>
+                        {% for x in date %}
+                        <option> {{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col">
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <br>
+    </div>
+</div>
+
+
+<div class="container">
+    <br>
+    {% if batch_list or messages or area %}
+    <hr class="line">
+    {% endif %}
+
+    <div class="row">
+        <div class="col">
+
+            <div class="row">
+                <div class="col">
+                    {% if s_count %}
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="name_color">successfully submitted <b>{{s_count}}</b> records</h4>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col">
+                    {% if d_count %}
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="name_color">successfully deleted <b>{{d_count}}</b> records</h4>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+
+
+            {% if area %}
+            <div class="row">
+                <h4 class="name_color">Showing list of students for <b>{{area}}</b> and <b>{{user_date}}</b></h4>
+            </div>
+            {% if batch %}
+            <div class="row">
+                <h4 class="name_color">Batch:<b>{{batch.0}}</b> Time:<b>{{batch.1}}-{{batch.2}}</b></h4>
+            </div>
+            {% else %}
+            <div class="row" id="custume_head">
+                <h4 class="name_color"></h4>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if batch_list %}
+        <div class="col">
+            <div class="col">
+                <h4 class="name_color">Batch</h4>
+            </div>
+
+            <div class="col">
+                <select class="form-select" aria-label="Default select example" name="batch" id="sort"
+                        onchange="sorting1(this.id)" required>
+                    <option disabled selected value="">Select batches</option>
+                    {% for id,batch,start_time,end_time in batch_list %}
+                    <option value="{{id}};{{start_time}}-{{end_time}}">{{batch}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <br>
+</div>
+
+
+{% if table %}
+<div class="container">
+    <form method="post" id="form1" name="form1">
+        {% csrf_token %}
+        {% if t_id %}
+        <input type="hidden" name="t_id" value="{{t_id}}"/>
+        {% else %}
+        <input type="hidden" name="t_id" id="batch_id"/>
+        {% endif %}
+        <input type="hidden" name="date" value="{{user_date}}"/>
+        <input type="hidden" name="area" value="{{area}}"/>
+        {% if checked_list %}
+        <input type="hidden" name="checked_tags" id="attain_record"/>  <!-- [[],[],[]]   -->
+        {% elif checked %}
+        <input type="hidden" name="checked_tags" value="{{checked}}"/>
+        {% endif %}
+        {% if batch_list %}
+        <input type="hidden" id="check"/>
+        {% endif %}
+
+        <div class="table_width_control" id="shadow_table">
+            <table class="table" align="center">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="row">Tag_Id</th>
+                    <th scope="row">Name</th>
+                    <th scope="row">Roll-Div</th>
+                    <th scope="row">Course-Year</th>
+                    <th scope="row">Time</th>
+                </tr>
+                </thead>
+                <tbody id="table_body">
+
+                {% for data in table %}
+                <tr class="normal_row">
+                    <td>
+                        <div class="custom-control custom-checkbox">
+                            {% if data.0 in checked %}
+                            <input type="checkbox" class="custom-control-input" id="{{data.0}}" value="{{data.0}}"
+                                   name="std_records" checked>
+                            <label class="custom-control-label" for="{{data.0}}">{{data.0}}</label>
+                            {% else %}
+                            <input type="checkbox" class="custom-control-input" id="{{data.0}}" value="{{data.0}}"
+                                   name="std_records">
+                            <label class="custom-control-label" for="{{data.0}}">{{data.0}}</label>
+                            {% endif %}
+
+                        </div>
+                    </td>
+                    <td scope="row">{{data.1}}</td>
+                    <td scope="row">{{data.2}}-{{data.3}}</td>
+                    <td scope="row">{{data.4}}-{{data.5}}</td>
+                    <td scope="row">{{data.6}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <hr class="line">
+        <div class="row">
+            <div class="col">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Save Records</button>
+                </div>
+            </div>
+        </div>
+    </form>
+    <br>
+</div>
+{% endif %}
+
+{% block script %}
+<script type="text/javascript" src="{% static '/static_files/js/save_attendance.js' %}"></script>
+<script>
+
+attendance_list = {{checked_list}};
+</script>
+{% endblock %}
+{% endblock %}

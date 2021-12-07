@@ -1,0 +1,40 @@
+* {
+box-sizing: border-box;
+}
+.container {
+overflow: hidden;
+max-width : 95%;
+}
+.column_simple {
+float: left;
+width: 95%;
+height : auto;
+padding: 10px;
+text-align: left;
+margin: auto;
+padding-bottom: 100%;
+margin-bottom: -100%;
+}
+h4 {
+font-size: 1.1em;
+color: black;
+}
+.line{
+border-top: 1px dashed white;
+}
+.normal_row{
+background-color : rgba(146, 156, 143);
+}
+td {
+border-right: solid 2px rgba(52, 58, 64);
+border-left: solid 2px rgba(52, 58, 64);
+}
+.table_width_control{
+width: 100%;
+height: auto;
+overflow-x: scroll;
+scrollbar-width: thin;
+}
+#shadow_table{
+box-shadow: rgba(0, 0, 0, 0.5) 0px 25px 50px;
+}

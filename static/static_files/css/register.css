@@ -1,0 +1,23 @@
+div.myDiv {
+border: 1px outset black;
+background-color: rgba(52, 58, 64);
+text-align: left;
+width : 60%;
+margin: auto;
+margin-top: 2em;
+margin-bottom: 1em;
+box-shadow: rgba(0, 0, 0) 0px 25px 50px;
+}
+.container {
+overflow: hidden;
+max-width : 70%;
+}
+.name{
+color: white;
+}
+.line{
+border-top: 1px dashed white;
+}
+h4 {
+  font-size: 1.1em;
+}
