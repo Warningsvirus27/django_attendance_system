@@ -143,7 +143,6 @@ class TagApiView(APIView):
         return Response(data.data)
 
 
-
 def analyse_attendance(request):
     content = {'course': {}, 'title': 'Analyse', 'date_list': get_date()}
     timetable_df = pd.DataFrame(Timetable.objects.all().values())
@@ -213,20 +212,30 @@ def analyse_attendance(request):
 def view_timetable(request):
     content = {'head': ['COURSE', 'YEAR', 'PLACE', 'START TIME', 'END TIME',
                         'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT', 'SUN'],
-               'course': {}}
-    cursor = connection.cursor()
-    cursor.execute('select distinct(page_timetable.course) from page_timetable;')
-    courses = cursor.fetchall()
+               'course': {}, 'title': "View TimeTable"}
+    # cursor = connection.cursor()
+    # cursor.execute('select distinct(page_timetable.course) from page_timetable;')
+    # courses = cursor.fetchall()
+    timetable_df = pd.DataFrame(Timetable.objects.all().values())
+    courses = timetable_df['course'].unique().tolist()
 
     if courses:
         for course in courses:
-            cursor.execute(f'''select page_timetable.course, page_timetable.year,
+            '''cursor.execute(fselect page_timetable.course, page_timetable.year,
                                 page_timetable.area, page_timetable.start_time, page_timetable.end_time,
-                                page_timetable.Monday,page_timetable.Tuesday,page_timetable.Wednesday,
-                                page_timetable.Thursday,page_timetable.Friday,page_timetable.Saturday,
-                                page_timetable.Sunday from page_timetable where page_timetable.course = '{course[0]}'
-                                order by page_timetable.year ; ''')
-            content['course'][f'{course[0]}'] = cursor.fetchall()
+                                page_timetable."Monday",page_timetable."Tuesday",page_timetable.'Wednesday',
+                                page_timetable.'Thursday',page_timetable.'Friday',page_timetable.'Saturday',
+                                page_timetable.'Sunday' from page_timetable 
+                                where page_timetable.course = '{course[0]}'
+                                order by page_timetable.year ; )'''
+            data = timetable_df.loc[(timetable_df['course'] == course)].sort_values('year')[['course',
+                                'year', 'area', 'start_time', 'end_time', 'Monday', 'Tuesday',
+                                'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']]
+
+            content['course'][f'{course}'] = data.rename({'Monday': 'Mon', 'Tuesday': "Tue", "Wednesday": "Wed",
+                                                          'Thursday': "Thur",
+                         'Friday': "Fri", 'Saturday': "Sat", 'Sunday': "Sun", 'start_time': "StartTime",
+                         'end_time': "EndTime"}, axis=1).to_html(classes="table table-hover", index=False)
 
     else:
         messages.error(request, 'No timetable to show!')
@@ -922,7 +931,6 @@ def timetable_wise_count(request):
         return render(request, 'timetable.html', {})
     else:
         dates = timetable_df.sort_values('date', ascending=False)['date'].unique()
-        print(dates)
         date_list = list(map(lambda x: str(x), dates))
 
     timetable_df = pd.DataFrame(Timetable.objects.all().values())

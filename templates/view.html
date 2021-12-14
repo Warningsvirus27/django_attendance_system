@@ -20,8 +20,16 @@
 
 <div class="container">
     <div class="column_simple">
+        <div class="table_width_control" id="shadow_table">
+            {% for course,course_data in course.items %}
+            <div class="alert alert-danger" role="alert">
+            <h4 class="name_message"><b>COURSE : {{course}}</b></h4>
+                </div>
+        {{course_data | safe}}
+        {% endfor %}
+    </div>
 
-        {% for course,data in course.items %}
+        <!--{% for course,data in course.items %}
 
         <hr class="line">
 
@@ -56,7 +64,7 @@
         </div>
         <br>
 
-        {% endfor %}
+        {% endfor %}-->
 
     </div>
 
