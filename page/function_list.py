@@ -1,4 +1,5 @@
 from .models import TeacherRegister
+from datetime import date
 
 
 def return_count_value(timetable, date):
@@ -190,6 +191,7 @@ def get_date():
         x = str(x)
         # date_list.append(x[14:27])
         date_list.append(x)
+    date_list.insert(0, date.today().strftime("%Y-%m-%d"))
     return date_list
 
 

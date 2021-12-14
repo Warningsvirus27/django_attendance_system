@@ -150,7 +150,15 @@ def analyse_attendance(request):
     start_date = request.GET.get('DATE1')
     end_date = request.GET.get('DATE2')
     course = request.GET.get('course')
+    year = request.GET.get('year')
+    student_roll_number = request.GET.get('std_roll')
+    if course:
+        content['is_course'] = course
+    if year:
+        content['is_year'] = year
+
     is_bar_graph = False
+    is_batch_graph = False
 
     student = pd.DataFrame(Register.objects.all().values()).drop(['course', 'year'], axis=1)
     timetable = timetable_df.drop(
@@ -162,48 +170,203 @@ def analyse_attendance(request):
     df1 = pd.merge(attendance, student, on='tag_id')
     df2 = pd.merge(df1, timetable, on='id').drop(['id'], axis=1)
 
-    if start_date and end_date:
-        content['start_date'] = start_date
-        content['end_date'] = end_date
-
-        start_date = date(*list(map(int, start_date.split('-'))))
-        end_date = date(*list(map(int, end_date.split('-'))))
-        df3 = df2.loc[(df2['date'] <= start_date) & (df2['date'] >= end_date)]
-    elif start_date and not end_date:
-        content['start_date'] = start_date
-        start_date = date(*list(map(int, start_date.split('-'))))
-
-        df3 = df2.loc[df2['date'] == start_date]
-
-        is_bar_graph = True
-    else:
-        df3 = df2
-    distinct_counts = df3.sort_values(['date']).groupby(['course', 'year', 'date']).roll.nunique().to_dict()
-    distinct_dates = df3['date'].unique().tolist()
-
-    content['main_graph'] = combine_plot(distinct_counts, distinct_dates, is_bar_graph)
-
     compare_graphs = {}
-    tp = df2.drop_duplicates(subset='course')['course'].values.tolist()
-    for course in tp:
+    # ---------------------------------------------------------------
+    if student_roll_number:
+        is_bar_graph = True
+
+        distinct_batch = df2[(df2['course'] == course) & (df2['year'] == year) &
+                             (df2['roll'] == int(student_roll_number))].drop_duplicates(
+            subset='batch')['batch'].values.tolist()
+
         if start_date and end_date:
-            dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date) & (df2['date'] >= end_date
-                                                                                             )].sort_values(
-            ['date']).groupby(['year', 'date']).roll.nunique().to_dict()
-            dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date) & (df2['date'] >= end_date
-                                                                                            )]['date'].unique().tolist()
-            compare_graphs[course] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
-        elif start_date and not end_date:
-            dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)].sort_values(
-                ['date']).groupby(['year', 'date']).roll.nunique().to_dict()
-            dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)]['date'].unique().tolist()
-            is_bar_graph = True
-            compare_graphs[course] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
+            start_date = date(*list(map(int, start_date.split('-'))))
+            end_date = date(*list(map(int, end_date.split('-'))))
+            for batch in distinct_batch:
+                df3 = df2.loc[(df2['date'] <= start_date) & (df2['date'] >= end_date) & (df2['batch'] == batch) &
+                              (df2['course'] == course) & (df2['year'] == year) &
+                              (df2['roll'] == int(student_roll_number))]
+
+                dist_counts = df3.sort_values(
+                    'date').groupby(['roll', 'date']).roll.nunique().to_dict()
+                dist_dates = df3['date'].unique().tolist()
+                compare_graphs[f'{batch}-{student_roll_number}'] = comparision_plot(dist_counts, dist_dates,
+                                                                                    f'{course}-{year}-{batch}',
+                                                                                    is_bar_graph)
+        elif start_date:
+            start_date = date(*list(map(int, start_date.split('-'))))
+            for batch in distinct_batch:
+                df3 = df2.loc[(df2['date'] <= start_date) & (df2['course'] == course) & (df2['year'] == year)
+                              & (df2['roll'] == int(student_roll_number)) & (df2['batch'] == batch)]
+                dist_counts = df3.sort_values(
+                    'date').groupby(['roll', 'date']).roll.nunique().to_dict()
+                dist_dates = df3['date'].unique().tolist()
+                compare_graphs[f'{batch}-{student_roll_number}'] = comparision_plot(dist_counts, dist_dates,
+                                                                                    f'{course}-{year}-{batch}',
+                                                                                    is_bar_graph)
         else:
-            dist_counts = df2.loc[df2['course'] == course].sort_values(
-                ['date']).groupby(['year', 'date']).roll.nunique().to_dict()
-            dist_dates = df2.loc[df2['course'] == course]['date'].unique().tolist()
-            compare_graphs[course] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
+            for batch in distinct_batch:
+                df3 = df2.loc[(df2['course'] == course) & (df2['year'] == year) &
+                              (df2['roll'] == int(student_roll_number)) & (df2['batch'] == batch)]
+
+                dist_counts = df3.sort_values(
+                    'date').groupby(['roll', 'date']).roll.nunique().to_dict()
+                dist_dates = df3['date'].unique().tolist()
+                compare_graphs[f'{batch}-{student_roll_number}'] = comparision_plot(dist_counts, dist_dates,
+                                                                                    f'{course}-{year}-{batch}',
+                                                                                    is_bar_graph)
+        content['compare_graph'] = compare_graphs
+
+        return render(request, 'analyse.html', content)
+
+    # -------------------------------------------------------------
+    if course and year:
+        is_batch_graph = True
+        if start_date and end_date:
+            content['start_date'] = start_date
+            content['end_date'] = end_date
+
+            start_date = date(*list(map(int, start_date.split('-'))))
+            end_date = date(*list(map(int, end_date.split('-'))))
+            df3 = df2.loc[(df2['date'] <= start_date) & (df2['date'] >= end_date) &
+                          (df2['course'] == course) & (df2['year'] == year)]
+        elif start_date and not end_date:
+            content['start_date'] = start_date
+            start_date = date(*list(map(int, start_date.split('-'))))
+            df3 = df2.loc[(df2['course'] == course) & (df2['year'] == year) & (df2['date'] == start_date)]
+            is_bar_graph = True
+        else:
+            df3 = df2[(df2['course'] == course) & (df2['year'] == year)]
+
+        distinct_counts = df3.sort_values(['date']).groupby(['batch', 'date']).roll.nunique().to_dict()
+        distinct_dates = df3['date'].unique().tolist()
+
+    elif course:
+        if start_date and end_date:
+            content['start_date'] = start_date
+            content['end_date'] = end_date
+            start_date = date(*list(map(int, start_date.split('-'))))
+            end_date = date(*list(map(int, end_date.split('-'))))
+
+            df3 = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date) & (df2['date'] >= end_date)]
+        elif start_date:
+            start_date = date(*list(map(int, start_date.split('-'))))
+            df3 = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)]
+            is_bar_graph = True
+        else:
+            df3 = df2[df2['course'] == course]
+
+        distinct_counts = df3.sort_values(['date']).groupby(['year', 'batch', 'date']).roll.nunique().to_dict()
+        distinct_dates = df3['date'].unique().tolist()
+
+    else:
+        if start_date and end_date:
+            content['start_date'] = start_date
+            content['end_date'] = end_date
+
+            start_date = date(*list(map(int, start_date.split('-'))))
+            end_date = date(*list(map(int, end_date.split('-'))))
+            df3 = df2.loc[(df2['date'] <= start_date) & (df2['date'] >= end_date)]
+        elif start_date and not end_date:
+            content['start_date'] = start_date
+            start_date = date(*list(map(int, start_date.split('-'))))
+            df3 = df2.loc[df2['date'] == start_date]
+            is_bar_graph = True
+        else:
+            df3 = df2
+        distinct_counts = df3.sort_values(['date']).groupby(['course', 'year', 'date']).roll.nunique().to_dict()
+        distinct_dates = df3['date'].unique().tolist()
+
+    content['main_graph'] = combine_plot(distinct_counts, distinct_dates, is_bar_graph, is_batch_graph)
+
+    # -----------------------------------------------------------------------
+    if course and year:
+        distinct_batch = df2[(df2['course'] == course) & (df2['year'] == year)].drop_duplicates(
+            subset='batch')['batch'].values.tolist()
+
+        if start_date and end_date:
+            for batch in distinct_batch:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date) &
+                                      (df2['date'] >= end_date) & (df2['year'] == year) & (df2['batch'] == batch)
+                                      ].sort_values(
+                    'date').groupby(['batch', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date)
+                                     & (df2['date'] >= end_date) & (df2['year'] == year) & (df2['batch'] == batch)][
+                    'date'].unique().tolist()
+                compare_graphs[batch] = comparision_plot(dist_counts, dist_dates, f'{course}-{year}-{batch}',
+                                                         is_bar_graph)
+        elif start_date and not end_date:
+            for batch in distinct_batch:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)
+                                      & (df2['year'] == year) & (df2['batch'] == batch)].sort_values(
+                    'date').groupby(['batch', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)
+                                     & (df2['year'] == year) & (df2['batch'] == batch)]['date'].unique().tolist()
+                is_bar_graph = True
+                compare_graphs[batch] = comparision_plot(dist_counts, dist_dates, f'{course}-{year}-{batch}',
+                                                         is_bar_graph)
+        else:
+            for batch in distinct_batch:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['year'] == year) & (df2['batch'] == batch)
+                                      ].sort_values(
+                    ['date']).groupby(['batch', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['year'] == year) & (df2['batch'] == batch)
+                                     ]['date'].unique().tolist()
+                compare_graphs[batch] = comparision_plot(dist_counts, dist_dates, f'{course}-{year}-{batch}',
+                                                         is_bar_graph)
+
+    elif course:
+        distinct_year = df2[df2['course'] == course].drop_duplicates(subset='year')['year'].values.tolist()
+
+        if start_date and end_date:
+            for year in distinct_year:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date) &
+                                      (df2['date'] >= end_date) & (df2['year'] == year)].sort_values(
+                    'date').groupby(['batch', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date)
+                                     & (df2['date'] >= end_date) & (df2['year'] == year)][
+                    'date'].unique().tolist()
+                compare_graphs[year] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
+        elif start_date and not end_date:
+            for year in distinct_year:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)
+                                      & (df2['year'] == year)].sort_values(
+                    'date').groupby(['batch', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)
+                                     & (df2['year'] == year)]['date'].unique().tolist()
+                is_bar_graph = True
+                compare_graphs[year] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
+        else:
+            for year in distinct_year:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['year'] == year)].sort_values(
+                    ['date']).groupby(['batch', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['year'] == year)]['date'].unique().tolist()
+                compare_graphs[year] = comparision_plot(dist_counts, dist_dates, f'{course}-{year}', is_bar_graph)
+
+    else:
+        distinct_courses = df2.drop_duplicates(subset='course')['course'].values.tolist()
+        if start_date and end_date:
+            for course in distinct_courses:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date) & (df2['date'] >= end_date
+                                                                                                 )].sort_values(
+                    ['date']).groupby(['year', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] <= start_date) & (df2['date'] >= end_date
+                                                                                                )][
+                    'date'].unique().tolist()
+                compare_graphs[course] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
+        elif start_date and not end_date:
+            for course in distinct_courses:
+                dist_counts = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)].sort_values(
+                    ['date']).groupby(['year', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[(df2['course'] == course) & (df2['date'] == start_date)]['date'].unique().tolist()
+                is_bar_graph = True
+                compare_graphs[course] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
+        else:
+            for course in distinct_courses:
+                dist_counts = df2.loc[df2['course'] == course].sort_values(
+                    ['date']).groupby(['year', 'date']).roll.nunique().to_dict()
+                dist_dates = df2.loc[df2['course'] == course]['date'].unique().tolist()
+                compare_graphs[course] = comparision_plot(dist_counts, dist_dates, course, is_bar_graph)
 
     content['compare_graph'] = compare_graphs
     return render(request, 'analyse.html', content)

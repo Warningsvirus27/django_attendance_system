@@ -37,23 +37,38 @@ def get_x_y(record):
     return x, y
 
 
-def segregate_records(dataframe):
+def segregate_records(dataframe, is_batch):
     courses = {}
-    for key, item in dataframe.items():
-        course, year, date = key
-        courses[f'{course}'] = {}
-    for key, item in dataframe.items():
-        course, year, date = key
-        courses[f'{course}'][f'{year}'] = []
-    for key, item in dataframe.items():
-        course, year, date = key
-        courses[f'{course}'][f'{year}'].append(date)
-        courses[f'{course}'][f'{year}'].append(item)
+    if not is_batch:
+        for key, item in dataframe.items():
+            course, year, date = key
+            courses[f'{course}'] = {}
+        for key, item in dataframe.items():
+            course, year, date = key
+            courses[f'{course}'][f'{year}'] = []
+        for key, item in dataframe.items():
+            course, year, date = key
+            courses[f'{course}'][f'{year}'].append(date)
+            courses[f'{course}'][f'{year}'].append(item)
+    else:
+        for key, item in dataframe.items():
+            batch, date = key
+            courses[batch] = {}
+        for key, item in dataframe.items():
+            batch, date = key
+            courses[batch][batch] = []
+        for key, item in dataframe.items():
+            batch, date = key
+            courses[batch][batch].append(date)
+            courses[batch][batch].append(item)
+
     return courses
 
 
-def combine_plot(dataframe, distinct_dates, is_bar):
-    dataframe = segregate_records(dataframe)
+def combine_plot(dataframe, distinct_dates, is_bar, is_batch):
+
+    dataframe = segregate_records(dataframe, is_batch)
+    print(dataframe)
     plt.switch_backend('AGG')
     date = None
 
@@ -62,7 +77,8 @@ def combine_plot(dataframe, distinct_dates, is_bar):
         count_array = []
         count_title = []
         for course, data in dataframe.items():
-            for year_, (date_, count_) in data.items():
+            for year_, item in data.items():
+                date_, count_ = item
                 date = date_
                 count_array.append(count_)
                 count_title.append(f'{course}-{year_}')
@@ -87,14 +103,16 @@ def combine_plot(dataframe, distinct_dates, is_bar):
         graph = get_graph()
     else:
         plt.figure(figsize=(9, 5))
-        plt.title('Combined plot')
+        plt.title('Combine plot')
+
         for srno, (course, data) in enumerate(dataframe.items(), start=1):
-            # lw = abs(9 - 8 * srno / len(data.items()))
-            lw = abs(10 - 8 * srno / len(data.items()))
             ls = ['-', '--', '-.', ':']
             for year, record in data.items():
                 x, y = get_x_y(record)
-                plt.plot(x, y, label=f'{course}-{year}', linestyle=ls[srno % 4], linewidth=lw)
+                if is_batch:
+                    plt.plot(x, y, label=f'{year}', linestyle=ls[srno % 4], linewidth=random.uniform(2, 10))
+                else:
+                    plt.plot(x, y, label=f'{course}-{year}', linestyle=ls[srno % 4], linewidth=random.uniform(2, 10))
 
         plt.xlabel('Dates')
         plt.ylabel('Count of attendance')
@@ -123,18 +141,23 @@ def comparision_plot(dataframe, distinct_dates, course, is_bar):
     plt.switch_backend('AGG')
 
     if is_bar:
+        year = None
         plt.figure(figsize=(7, 4))
         count_array = []
         count_title = []
-        for year, data in dataframe.items():
+        for year_, data in dataframe.items():
+            year = year_
             count_array.append(data[1])
-            count_title.append(f'{year}')
+            count_title.append(f'{year_}')
 
         plt.bar(count_title, count_array)
 
         plt.xlabel('courses\n')
         plt.ylabel('Count of attendance')
-        plt.title(f'Comparision plot for {course}')
+        if year:
+            plt.title(f'Comparision plot for {course}-{year}')
+        else:
+            plt.title(f'Comparision plot for {course}')
         plt.tight_layout()
         plt.grid()
         graph = get_graph()
@@ -142,11 +165,9 @@ def comparision_plot(dataframe, distinct_dates, course, is_bar):
         plt.figure(figsize=(7, 4))
         plt.title(f'Comparision plot for {course}')
         for srno, (year, data) in enumerate(dataframe.items(), start=1):
-            # lw = abs(9 - 8 * srno / len(data.items()))
-            # lw = abs(10 - 8 * srno / len(data))
-            # ls = ['-', '--', '-.', ':']
+            ls = ['-', '--', '-.', ':']
             x, y = get_x_y(data)
-            plt.plot(x, y, label=f'{year}')  # , linestyle=ls[srno % 4], linewidth=lw
+            plt.plot(x, y, label=f'{year}', linestyle=ls[srno % 4], linewidth=random.uniform(2, 10))
 
         plt.xlabel('Dates')
         plt.ylabel('Count of attendance')
