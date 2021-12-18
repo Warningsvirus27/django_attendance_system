@@ -1,0 +1,47 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+nav.M{
+    position: relative;
+
+
+}
+ul#u{
+
+    border-bottom: 1px solid black;
+}
+ul#u li{
+    list-style: none;
+    position: relative;
+}
+ul#u li{
+    display:inline-block;
+    padding:5px 7px;
+    margin: 0 15px;
+    color: black;
+    font-weight: bolder;
+    font-size: large;
+    cursor: pointer;
+}
+
+ul#u li#active{
+border-radius: 5px;
+    border:1.5px solid black;
+    border-bottom:0px;
+    border-bottom-left-radius:0px;
+    border-bottom-right-radius:0px;
+    box-shadow:0px 0px 0px 1px #fff;
+}
+#one,#two{
+position: absolute;
+
+}
+
+#two{
+    display: none;
+}
+p
+{
+    width : 70%;
+    }

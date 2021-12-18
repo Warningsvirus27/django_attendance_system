@@ -194,6 +194,8 @@ def analyse_attendance(request):
                                                                                     f'{course}-{year}-{batch}',
                                                                                     is_bar_graph)
         elif start_date:
+            is_bar_graph = True
+
             start_date = date(*list(map(int, start_date.split('-'))))
             for batch in distinct_batch:
                 df3 = df2.loc[(df2['date'] <= start_date) & (df2['course'] == course) & (df2['year'] == year)
@@ -215,8 +217,14 @@ def analyse_attendance(request):
                 compare_graphs[f'{batch}-{student_roll_number}'] = comparision_plot(dist_counts, dist_dates,
                                                                                     f'{course}-{year}-{batch}',
                                                                                     is_bar_graph)
+
         content['compare_graph'] = compare_graphs
 
+        batch_count = []
+        for batch in distinct_batch:
+            batch_count.append(df3.loc[(df3['batch'] == batch)].shape[0])
+        is_bar_graph = True
+        content['main_graph'] = comparision_plot_batches(distinct_batch, batch_count)
         return render(request, 'analyse.html', content)
 
     # -------------------------------------------------------------
@@ -978,12 +986,12 @@ def trace_card(request, method='<1>'):
                     return render(request, 'trace.html',
                                   {"table_data": table_data, "person_data": person, "date": date_list,
                                    'user_date': str(user_date), 'origin': 'student', 'title': 'Trace',
-                                   't_list': teacher_list()})
+                                   't_list': teacher_list(), 'data_available': True})
                 else:
                     return render(request, 'trace.html',
                                   {"table_data": table_data, "person_data": person, "date": date_list,
                                    'user_date': str(user_date), 'origin': 'teacher', 'title': 'Trace',
-                                   't_list': teacher_list()})
+                                   't_list': teacher_list(), 'data_available': True})
             # if not registered tag id
             if not is_valid_tag:
                 messages.error(request, "Invalid Tag Id")

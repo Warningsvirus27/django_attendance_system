@@ -68,7 +68,6 @@ def segregate_records(dataframe, is_batch):
 def combine_plot(dataframe, distinct_dates, is_bar, is_batch):
 
     dataframe = segregate_records(dataframe, is_batch)
-    print(dataframe)
     plt.switch_backend('AGG')
     date = None
 
@@ -176,4 +175,16 @@ def comparision_plot(dataframe, distinct_dates, course, is_bar):
         plt.tight_layout()
         plt.grid()
         graph = get_graph()
+    return graph
+
+
+def comparision_plot_batches(batches, batch_count):
+    plt.switch_backend('AGG')
+    plt.figure(figsize=(7, 4))
+    plt.bar(batches, batch_count)
+    plt.xlabel('Batches\n')
+    plt.ylabel('Count of attendance')
+    plt.tight_layout()
+    plt.grid()
+    graph = get_graph()
     return graph

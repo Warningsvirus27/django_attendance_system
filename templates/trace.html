@@ -3,6 +3,8 @@
 
 {% block style %}
 <link rel="stylesheet" href="{% static '/static_files/css/trace.css' %}"/>
+<!--<link rel="stylesheet" href="{% static '/static_files/css/nav.css' %}"/>-->
+
 {% endblock %}
 
 
@@ -19,11 +21,27 @@
 {% endif %}
 
 
-<div class="container">
+<div class = "myDiv">
+<div class="container1">
     <br>
-    <!--<div class="row">-->
-    <div class="column">
-        <form method="get" action="{% url 'page:trace' %}<1>">
+    <div class="tab">
+        <div class="row">
+<div class="col">
+  <button class="tablinks" onclick="openTab(event, '1')">TAG ID</button>
+</div>
+        <div class="col">
+  <button class="tablinks {% if not data_available %}active{% endif %}" onclick="openTab(event, '2')">STUDENT DETAILS</button>
+        </div>
+        <div class="col">
+  <button class="tablinks" onclick="openTab(event, '3')">TEACHER NAME</button>
+</div>
+            </div>
+        </div>
+
+<div id="1" class="tabcontent">
+    <hr class="line">
+    <br>
+  <form method="get" action="{% url 'page:trace' %}<1>">
             <div class="row">
                 <div class="col">
                     <h4 class="name">Enter Your TAG ID.</h4>
@@ -31,9 +49,7 @@
                            aria-label="Tag id" autocomplete="off" required>
                 </div>
             </div>
-
-            <hr class="line">
-
+      <hr class="line">
             <div class="row">
                 <div class="col">
                     <h4 class="name">Any specific date</h4>
@@ -57,11 +73,12 @@
                 </div>
             </div>
         </form>
-    </div>
+</div>
 
-
-    <div class="column">
-        <form method="get" action="{% url 'page:trace' %}<2>">
+<div id="2" class="tabcontent" {% if not data_available %} style="display:block" {% endif %}>
+    <hr class="line">
+    <br>
+  <form method="get" action="{% url 'page:trace' %}<2>">
             <div class="row">
                 <div class="col">
                     <h4 class="name">Enter Roll Number.</h4>
@@ -121,11 +138,12 @@
             </div>
             <br>
         </form>
-    </div>
+</div>
 
-
-    <div class="column">
-        <form method="get" action="{% url 'page:trace' %}<3>">
+<div id="3" class="tabcontent">
+    <hr class="line">
+    <br>
+  <form method="get" action="{% url 'page:trace' %}<3>">
             <div class="row">
                 <div class="col">
                     <h4 class="name">Teacher Name.</h4>
@@ -163,14 +181,18 @@
                 </div>
             </div>
         </form>
-    </div>
-    <!--</div>-->
 </div>
+    <br>
+</div>
+</div>
+                <!--<button type="button" class="btn btn-info" data-toggle="collapse"
+                                                    data-target="#demo">TAG ID</button>-->
+<!------------------------------------------------------------------->
 
 
 <div class="container">
     <br>
-    <hr class="line">
+    <!--<hr class="line">-->
 
     <div class="column_simple">
         {% if origin == 'student' %}
@@ -223,7 +245,6 @@
 </div>
 <br>
 
-
 <div class="container">
     {% if table_data %}
     <hr class="line">
@@ -275,6 +296,9 @@
     </div>
     {% endif %}
     <br><br>
+
+<script type="text/javascript" src="{% static '/static_files/js/trace.js' %}"></script>
+
     {% else %}
     <div>
         <h2>You are not currently logged in, to login click <a href="{% url 'login' %}">here</a></h2>

@@ -43,107 +43,106 @@ function sorting1(s) {
   var s_index = document.getElementById(s).selectedIndex;
   var s_index_tag = document.getElementById(s).children[s_index];
 
-
   var table_tr = document.getElementsByTagName("tr");
   var table_tr=Array.from(table_tr);
 
-  //var attendance_list = [];  rendering it from html page
-
-  for(var i in table_tr)
-  {
-      if(table_tr[i].style.display=="none")
-      {
-        table_tr[i].style.display="";
-      }
-  }
 
   var time_mar = document.getElementById(s)[s_index].value;
   var id=time_mar.split(";")[0];
-  var time_mar = time_mar.split(";")[1];
-
-
-  // ----------------------------------------------- for h4 tag
-   if(document.getElementById("h"))
-   {
-  document.getElementById("h").remove();
-   }
-
-  var h_tag_ele=document.getElementById("custume_head");
-  var bold=s_index_tag.innerText;
-
-  h_tag=`<p id="h">Batch:<b>${bold}</b> Time:<b>${time_mar}<b></p>`;
-  var heading=1;
-  h_tag_ele.insertAdjacentHTML("beforebegin",h_tag);
-  // ----------------------------------------------
   document.getElementById("batch_id").value=id;
-  var start_time = time_mar.split("-")[0];
 
+
+  var time = time_mar.split(";")[1];
+
+  var start_time = time.split("-")[0];
   var start_minute = parseInt(start_time.split(":")[1]);
   var start_second = parseInt(start_time.split(":")[2]);
   var start_hour = parseInt(start_time.split(":")[0]);
 
-  var end_time = time_mar.split("-")[1];
 
+  var end_time = time.split("-")[1];
   var end_minute = parseInt(end_time.split(":")[1]);
   var end_second = parseInt(end_time.split(":")[2]);
   var end_hour = parseInt(end_time.split(":")[0]);
 
-console.log(start_time);
-console.log(end_time);
+   var h_tag_ele=document.getElementById("custume_head");
+  var bold=s_index_tag.innerText;
+  h_tag=`<p id="h">Batch:<b>${bold}</b> Time:<b>${time}<b></p>`;
+  h_tag_ele.innerHTML=h_tag;
 
   var attendance_record = attendance_list[s_index-1];
-  document.getElementById("attain_record").value=`(${attendance_record})`;
+ document.getElementById("attain_record").value=`(${attendance_record})`;
 
-  var hidden = attendance_record;
+  var batch_ticked_list = attendance_record;
+
+    for(var i in table_tr)
+  {
+  if(i!=0)
+  {
+     console.log(table_tr[i]);
+      table_tr[i].style.display="none";
+  }
+  }
+
 
   for(var i in table_tr)
   {
     if (i != 0) {
 
-      var col = table_tr[i].querySelector("td:nth-child(5)").innerHTML;
-      var col1=table_tr[i].querySelector("td:nth-child(1)");
+      var col_time = table_tr[i].querySelector("td:nth-child(5)").innerHTML;
+      var table_tag_id=table_tr[i].querySelector("td:nth-child(1)");
 
-      var col1_checked=col1.querySelector("input[type='checkbox']");
+      var table_minute = parseInt(col_time.split(":")[1]);
+      var table_second = parseInt(col_time.split(":")[2]);
+      var table_hour = parseInt(col_time.split(":")[0]);
+ console.log(start_hour, start_minute, end_hour, end_minute);
+ console.log(table_hour, table_minute);
 
-      var table_minute = parseInt(col.split(":")[1]);
-      var table_second = parseInt(col.split(":")[2]);
-      var table_hour = parseInt(col.split(":")[0]);
-
-console.log(table_hour, table_minute, table_second);
-
-    var show_list = false;
 
       if (table_hour >= start_hour && table_hour <= end_hour) {
+          if(table_hour==start_hour)
+          {
+              if(table_minute>=start_minute)
+              {
+                  table_tr[i].style.display="";
+              }
+          }
 
-        if (true)//(table_minute >= start_minute && table_minute <= end_minute)
-        {
-        // ---------------------------------------------------
 
-        var col1_tagid = parseInt(col1.innerText);
-         col1_checked.checked=false;
-           for(var k=0;k<hidden.length;k++ )
-           {
-               if(col1_tagid==hidden[k])
+          if(table_hour==end_hour)
+          {
+              if(table_minute<=end_minute)
+              {
+                  table_tr[i].style.display="";
+              }
+          }
+     if (table_hour >  start_hour && table_hour < end_hour)
+     table_tr[i].style.display="";
+        }
+      }
+    }
+
+    for(var i in table_tr)
+    {
+        if (i != 0) {
+
+        var col1=table_tr[i].querySelector("td:nth-child(1)");
+        var col1_checked=col1.querySelector("input[type='checkbox']");
+            var col1_tagid = parseInt(col1.innerText);
+            col1_checked.checked=false;
+            console.log(batch_ticked_list);
+            for(var k=0;k<batch_ticked_list.length;k++ )
+            {
+               if(col1_tagid==batch_ticked_list[k])
                {
                col1_checked.checked=true;
                }
-           }
-           // -------------------------------------------------------
+            }
         }
-        else {
-          if(col1_checked.checked==true)
-         { col1_checked.checked=false };
-          table_tr[i].style.display="none";
-        }
-      } else {
-
-      if(col1_checked.checked==true)
-         { col1_checked.checked=false };
-        table_tr[i].style.display="none";
-      }
     }
+
   }
-}
+
 var f_one=document.getElementById("form1");
 var f2_two=document.getElementById("check");
 
